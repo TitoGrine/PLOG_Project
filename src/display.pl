@@ -1,7 +1,7 @@
-:- include('board.pl').
+% :- include('board.pl').
 % :- include('board1.pl').
 % :- include('board2.pl').
-% :- include('board3.pl').
+ :- include('board3.pl').
 :- include('logic.pl').
 :- include('draw.pl').
 
@@ -23,16 +23,16 @@ piece(pawn, black, '♟').
 piece(pawn, white, '♙').
 
 display_board :-
-    nl,
-    draw_top_boundary,
-    draw_column_coordinates,
+    nl, draw_space, draw_title, nl,
+    draw_space, draw_top_boundary,
+    draw_space, draw_column_coordinates,
     \+display_board([6, 6], 0),
-    draw_bottom_boundary.
+    draw_space, draw_bottom_boundary, nl.
 
 display_board([R, C], X) :-
     X < R, 
-    draw_separator(C),
-    draw_line_coordinate(X),
+    draw_space, draw_separator(C),
+    draw_space, draw_line_coordinate(X),
     \+display_row([X, C], 0), nl,
     N is X + 1, display_board([R, C], N).
    
