@@ -1,13 +1,26 @@
-% :- include('board.pl').
+:- include('board.pl').
 % :- include('board1.pl').
 % :- include('board2.pl').
-:- include('board3.pl').
+% :- include('board3.pl').
 :- include('logic.pl').
 :- include('draw.pl').
 
-% Display
 opposite(black, white).
 opposite(white, black).
+
+% Pieces
+piece(king, black, '♚').
+piece(king, white, '♔').
+piece(queen, black, '♛').
+piece(queen, white, '♕').
+piece(bishop, black, '♝').
+piece(bishop, white, '♗').
+piece(rook, black, '♜').
+piece(rook, white, '♖').
+piece(knight, black, '♞').
+piece(knight, white, '♘').
+piece(pawn, black, '♟').
+piece(pawn, white, '♙').
 
 display_board :-
     nl,

@@ -1,4 +1,4 @@
-% This module has all actual drawing in the console.
+% This module makes all actual drawing in the console.
 % This way drawing details are hidden from the view clauses
 
 % High level rules used by display

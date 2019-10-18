@@ -1,19 +1,5 @@
 % This module holds everything related to game logic
 
-% Pieces
-piece(king, black, '♚').
-piece(king, white, '♔').
-piece(queen, black, '♛').
-piece(queen, white, '♕').
-piece(bishop, black, '♝').
-piece(bishop, white, '♗').
-piece(rook, black, '♜').
-piece(rook, white, '♖').
-piece(knight, black, '♞').
-piece(knight, white, '♘').
-piece(pawn, black, '♟').
-piece(pawn, white, '♙').
-
 % Set the board back to the starting board
 reset_board :-
     retractall(cell(_,_,_,_)),
