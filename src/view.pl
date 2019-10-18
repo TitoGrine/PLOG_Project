@@ -1,27 +1,8 @@
-% Default board
-
-cell(2, 2, black, king).
-cell(3, 2, white, king).
-cell(0,0, black, pawn).
-cell(4, 5, white, bishop).
-
-% Pieces
-
-piece(king, black, '♚').
-piece(king, white, '♔').
-piece(queen, black, '♛').
-piece(queen, white, '♕').
-piece(bishop, black, '♝').
-piece(bishop, white, '♗').
-piece(rook, black, '♜').
-piece(rook, white, '♖').
-piece(knight, black, '♞').
-piece(knight, white, '♘').
-piece(pawn, black, '♟').
-piece(pawn, white, '♙').
-
+:- include('board.pl').
 
 % Display
+opposite(black, white).
+opposite(white, black).
 
 display_board :-
     nl,
@@ -52,7 +33,7 @@ display_piece(R, C) :-
 
 display_piece(R, C) :-
     \+cell(C, R, Color, Piece),
-    ansi_format([bold, bg(white)],'   ', []),
+    ansi_format([bold, bg(black)],'   ', []), %change bg color here!!
     ansi_format([bold, fg(white)],'│', []).
 
 display_coordinates :-
@@ -100,9 +81,10 @@ write_bottom_corner_left :-
 
 display(Piece, Color) :-
     piece(Piece, Color, Char),
-    ansi_format([bold, bg(magenta), fg(white)],' ', []),
-    ansi_format([bold, bg(magenta), fg(white)], Char, []),
-    ansi_format([bold, bg(magenta), fg(white)],' ', []),
+    opposite(Color, Oposite),
+    ansi_format([bold, bg(Oposite), fg(Color)],' ', []),
+    ansi_format([bold, bg(Oposite), fg(Color)], Char, []),
+    ansi_format([bold, bg(Oposite), fg(Color)],' ', []),
     ansi_format([bold, fg(white)],'│', []).
 
 
