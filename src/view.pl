@@ -1,4 +1,8 @@
-:- include('board.pl').
+% :- include('board.pl').
+% :- include('board1.pl').
+% :- include('board2.pl').
+:- include('board3.pl').
+:- include('logic.pl').
 
 % Display
 opposite(black, white).
