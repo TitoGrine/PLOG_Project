@@ -82,9 +82,9 @@ write_bottom_corner_left :-
 display(Piece, Color) :-
     piece(Piece, Color, Char),
     opposite(Color, Oposite),
-    ansi_format([bold, bg(Oposite), fg(Color)],' ', []),
-    ansi_format([bold, bg(Oposite), fg(Color)], Char, []),
-    ansi_format([bold, bg(Oposite), fg(Color)],' ', []),
+    ansi_format([bold, hbg(Oposite), fg(Color)],' ', []),
+    ansi_format([bold, hbg(Oposite), fg(Color)], Char, []),
+    ansi_format([bold, hbg(Oposite), fg(Color)],' ', []),
     ansi_format([bold, fg(white)],'│', []).
 
 
