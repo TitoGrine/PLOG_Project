@@ -2,6 +2,7 @@
 
 % Example board where all pieces have been placed
 % This also exemplifies the limits of the board
+
 cell(1, 2, white, king).
 cell(3, 3, black, king).
 cell(3, 4, white, pawn).

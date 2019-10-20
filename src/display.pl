@@ -1,4 +1,4 @@
-% :- include('board.pl').
+% :- include('default_board.pl').
 % :- include('board1.pl').
 % :- include('board2.pl').
  :- include('board3.pl').

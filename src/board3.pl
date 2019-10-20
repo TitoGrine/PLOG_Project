@@ -1,6 +1,7 @@
 :- dynamic(cell/4).
 
 % Example board where the black kigng has been surrounded
+
 cell(1, 2, white, king).
 cell(3, 3, black, king).
 cell(3, 4, white, pawn).
