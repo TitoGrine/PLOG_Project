@@ -1,12 +1,12 @@
-can_move(Piece, Xinit, Yinit, Xdest, Ydest) :-
-    Piece = pawn, !,
+can_move(pawn, Xinit, Yinit, Xdest, Ydest) :-
+    !,
     NextY is Yinit + 1, PrevY is Yinit - 1,
     NextX is Xinit + 1, PrevX is Xinit - 1,
     ((Xinit = Xdest, (Ydest = NextY; Ydest = PrevY));
     (Yinit = Ydest, (Xdest = NextX; Xdest = PrevX))).
 
-can_move(Piece, Xinit, Yinit, Xdest, Ydest) :-
-    Piece = king, !,
+can_move(king, Xinit, Yinit, Xdest, Ydest) :-
+    !,
     NextY is Yinit + 1, PrevY is Yinit - 1,
     NextX is Xinit + 1, PrevX is Xinit - 1,
     ((Xinit = Xdest, (Ydest = NextY; Ydest = PrevY));
@@ -14,24 +14,24 @@ can_move(Piece, Xinit, Yinit, Xdest, Ydest) :-
     (Xdest = NextX, (Ydest = NextY; Ydest = PrevY));
     (Xdest = PrevX, (Ydest = NextY; Ydest = PrevY))).
 
-can_move(Piece, Xinit, Yinit, Xdest, Ydest) :-
-    Piece = rook, !,
+can_move(rook, Xinit, Yinit, Xdest, Ydest) :-
+    !,
     (Xinit = Xdest; Yinit = Ydest).
 
-can_move(Piece, Xinit, Yinit, Xdest, Ydest) :-
-    Piece = bishop, !,
+can_move(bishop, Xinit, Yinit, Xdest, Ydest) :-
+    !,
     Xdest \= Xinit,
     Inclination is (Ydest - Yinit) / (Xdest - Xinit),
     (Inclination = -1; Inclination = 1).
 
-can_move(Piece, Xinit, Yinit, Xdest, Ydest) :-
-    Piece = queen, !,
+can_move(queen, Xinit, Yinit, Xdest, Ydest) :-
+    !,
     (Xinit = Xdest; Yinit = Ydest;
     (Xdest \= Xinit, Inclination is (Ydest - Yinit) / (Xdest - Xinit),
     (Inclination = -1; Inclination = 1))).
 
-can_move(Piece, Xinit, Yinit, Xdest, Ydest) :-
-    Piece = knight, !,
+can_move(knight, Xinit, Yinit, Xdest, Ydest) :-
+    !,
     NextY is Yinit + 1, PrevY is Yinit - 1,
     NextX is Xinit + 1, PrevX is Xinit - 1,
     DoubleNextY is Yinit + 2, DoublePrevY is Yinit - 2,
