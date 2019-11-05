@@ -1,3 +1,5 @@
+:- include('game.pl').
+
 main_menu_header :-
     write('============================================='), nl,
     write(' _______  _______           _______  _       '), nl,
@@ -18,8 +20,8 @@ main_menu_options :-
     write('      3 - Machine vs Machine'), nl,
     write('      4 - Exit'), nl.
 
-execute_menu_input(Input) :- !.
-    %!, Input =:= 1, start_game.
+execute_menu_input(Input) :-
+    !, Input =:= 1, start_game.
 execute_menu_input(Input) :- !.
     %!, Input =:= 2, start_game.
 execute_menu_input(Input) :- !.
@@ -29,10 +31,9 @@ execute_menu_input(Input) :-
 execute_menu_input(_) :-
     write('Invalid Input!').
 
-
-menu_cicle:-
+echek:-
     repeat,
         main_menu_header,
         main_menu_options,
         read(Input),
-        execute_menu_input(Input),
+        execute_menu_input(Input).
