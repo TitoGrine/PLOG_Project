@@ -1,5 +1,11 @@
 % This module handles all restrictions to when you play/place a piece
 
+place(Player, Piece) :-
+    repeat,
+    format('New Position for ~s: ', [Piece]),
+    read_coords(X, Y),
+    piece(Piece, Player, _).
+
 side_enemy_king(R, C, Color) :-
     opposite(Color, Opposite),
     cell(KingR, KingC, Opposite, king),
