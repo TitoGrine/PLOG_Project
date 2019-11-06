@@ -31,11 +31,11 @@ display_board([R, C], X) :-
     draw_space, draw_separator(C),
     draw_space, draw_line_coordinate(X),
     \+display_row([X, C], 0), nl,
-    N is X + 1, display_board([R, C], N).
+    N is X + 1, !, display_board([R, C], N).
    
 display_row([R, C], X) :-
     X < C, display_piece(R, X),
-    N is X + 1, display_row([R, C], N).
+    N is X + 1, !, display_row([R, C], N).
 
 display_piece(R, C) :-
     cell(C, R, Color, Piece),

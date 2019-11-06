@@ -8,7 +8,8 @@ start_game :-
 
 play :- 
     choose_piece(white, Piece),
-    (move(white, Piece); place(white, Piece)).
+    (move(white, Piece); place(white, Piece)),
+    display_board.
 
 %next_player(white, black).
 %next_player(black, white).
