@@ -1,5 +1,14 @@
 % This module holds everything related to game logic
 
+check_surrounded(R, C) :-
+    PR is R - 1, NR is R + 1,
+    PC is C - 1, NC is C + 1,
+    !,
+    (cell(C, PR, _, _),
+     cell(C, NR, _, _),
+     cell(PC, R, _, _),
+     cell(NC, R, _, _)).
+
 % Set the board back to the starting board
 reset_board :-
     retractall(cell(_,_,_,_)),

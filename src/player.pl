@@ -1,5 +1,11 @@
 :- include('display.pl').
 :- include('utils.pl').
+:- include('movement.pl').
+:- include('placement.pl').
+
+player_turn(Player) :-
+    choose_piece(Player, Piece),
+    (move(Player, Piece); place(Player, Piece)).
 
 choose_piece(Player, Piece) :-
     repeat,

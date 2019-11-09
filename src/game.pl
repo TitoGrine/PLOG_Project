@@ -1,16 +1,26 @@
-:- include('movement.pl').
-:- include('placement.pl').
 :- include('player.pl').
+:- include('logic.pl').
 
 start_game :-
     display_board,
-    play.
+    play(white).
 
-play :- 
-    choose_piece(white, Piece),
-    (move(white, Piece); place(white, Piece)),
-    display_board.
+play(Player) :- 
+    player_turn(Player),
+    display_board,
+    next_player(Player, NextPlayer),
+    (end_game ; play(NextPlayer)).
 
-%next_player(white, black).
-%next_player(black, white).
+next_player(white, black).
+next_player(black, white).
+
+end_game :-
+    cell(WKC, WKR, white, king),
+    cell(BKC, BKR, black, king),
+    !,
+    ((check_surrounded(WKR, WKC),
+     write('The black player has won!!'));
+    (check_surrounded(BKR, BKC),
+     write('The white player has won!!'))).
+
 
