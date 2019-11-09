@@ -3,7 +3,8 @@
 
 start_game :-
     display_board,
-    play(white).
+    play(white),
+    reset_board.
 
 play(Player) :- 
     player_turn(Player),
