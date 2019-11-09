@@ -2,10 +2,12 @@
 :- include('utils.pl').
 :- include('movement.pl').
 :- include('placement.pl').
+:- include('logic.pl').
 
 player_turn(Player) :-
     choose_piece(Player, Piece),
-    (move(Player, Piece); place(Player, Piece)).
+    (move(Player, Piece); place(Player, Piece)),
+    readjust_board.
 
 choose_piece(Player, Piece) :-
     repeat,
