@@ -16,10 +16,26 @@ move(Player, Piece) :-
     check_connections),!,
     \+ cancel(Xdest, Ydest).
 
+special_pawn(Player) :-
+    ansi_format([fg(green)],'Pawn can move immediatly after being played.', []), nl,
+    cell(Xinit, Yinit, Player, pawn),
+    !,
+    repeat,
+        change_database(Xinit, Yinit, Player, pawn),
+        read_coords_no_cancel(Xdest, Ydest, pawn),
+        valid_cell(Ydest, Xdest),
+        valid_move(pawn, Xinit, Yinit, Xdest, Ydest, Player),
+        change_database(Xdest, Ydest, Player, pawn),
+        check_virtual_limits,
+        check_connections,
+    !.
+
+
 valid_cell(R, C) :-
     within_limits(R, C),!,              % Ensures the position is within the board limits
     \+ cell(C, R, _, _),!.              % Checks if there is already a piece in that cell
 
+% TODO: change to Flood Fill Algorithm
 check_connections :-
     \+((cell(C, R, _, _),
        \+ connected(R, C))).
@@ -41,14 +57,14 @@ connected(R, C) :-
      cell(PC, NR, _, _);
      cell(PC, PR, _, _)).
 
-valid_move(pawn, Xinit, Yinit, Xdest, Ydest, Player) :-
+valid_move(pawn, Xinit, Yinit, Xdest, Ydest, _) :-
     !,
     NextY is Yinit + 1, PrevY is Yinit - 1,
     NextX is Xinit + 1, PrevX is Xinit - 1,
     ((Xinit = Xdest, (Ydest = NextY; Ydest = PrevY));
     (Yinit = Ydest, (Xdest = NextX; Xdest = PrevX))).
 
-valid_move(king, Xinit, Yinit, Xdest, Ydest, Player) :-
+valid_move(king, Xinit, Yinit, Xdest, Ydest, _) :-
     !,
     NextY is Yinit + 1, PrevY is Yinit - 1,
     NextX is Xinit + 1, PrevX is Xinit - 1,
@@ -77,7 +93,7 @@ valid_move(queen, Xinit, Yinit, Xdest, Ydest, Player) :-
     diagonal_cross_enemy(Yinit, Xinit, Ydest, Xdest, Player),!,
     straight_cross_enemy(Yinit, Xinit, Ydest, Xdest, Player).
 
-valid_move(knight, Xinit, Yinit, Xdest, Ydest, Player) :-
+valid_move(knight, Xinit, Yinit, Xdest, Ydest, _) :-
     !,
     NextY is Yinit + 1, PrevY is Yinit - 1,
     NextX is Xinit + 1, PrevX is Xinit - 1,
@@ -87,4 +103,4 @@ valid_move(knight, Xinit, Yinit, Xdest, Ydest, Player) :-
     ((Ydest = DoubleNextY; Ydest = DoublePrevY), (Xdest = NextX; Xdest = PrevX))).
 
 valid_move(_, _, _, _, _, _) :-
-    write('Invalid move'), false.
+    ansi_format([fg(green)],'Invalid move.', []), false.
