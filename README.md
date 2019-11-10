@@ -13,13 +13,12 @@
  - [ ] When a player is asked to choose a piece, have the possibility of choosing 'swap' in order to swap their rook with the king (if possible)
  - [ ] Make the main menu to choose game mode
  - [ ] Implement game mode with random AI
- - [ ] Implement game mode with smart AI at least one level of decision)
-
+ - [ ] Implement game mode with smart AI (at least one level of decision)
  - [ ] Try to remove as many warnings as possible
 
 #### Testing:
  - [ ] Placement on board
- - [ ] Pieces movements
+ - [ ] Piece movements
  - [ ] Virtual limits
  - [ ] Game edge cases
  - [ ] Just try to find bugs x)
