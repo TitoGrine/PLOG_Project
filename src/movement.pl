@@ -6,13 +6,22 @@ move(Player, Piece) :-
     repeat,
     change_database(Xinit, Yinit, Player, Piece),
     read_coords(Xdest, Ydest, Piece),
-    (cancel(Xdest, Ydest); 
-    valid_cell(Ydest, Xdest),
+    (cancel(Xdest, Ydest);
+    (Piece == rook, castling_move(Player, Xdest, Ydest, Xinit, Yinit));
+    (valid_cell(Ydest, Xdest),
     valid_move(Piece, Xinit, Yinit, Xdest, Ydest, Player),
     change_database(Xdest, Ydest, Player, Piece),
     check_virtual_limits,
-    check_connections),!,
+    check_connections)),!,
     \+ cancel(Xdest, Ydest).
+
+castling_move(Player, X, Y, RookX, RookY) :-
+    castling_available(Player),         %Checking if the player has not used castling already
+    cell(KingX, KingY, Player, king),
+    KingX == X, KingY == Y,
+    change_database(RookX, RookY, Player, king),
+    change_database(KingX, KingY, Player, rook),
+    castling_done(Player).
 
 special_power_on_placement(pawn, Player) :-
     cell(Xinit, Yinit, Player, pawn),
@@ -35,7 +44,7 @@ special_power_on_placement(bishop, Player) :-
         delete_from_database(X, Y, TargetPlayer, Piece),
         check_connections).
 
-special_power_on_placement(_, _).    
+special_power_on_placement(_, _).
 
 only_kings_on_board(Player) :-
     \+((cell(_,_,Color,Piece),
