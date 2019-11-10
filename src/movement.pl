@@ -1,5 +1,3 @@
-:- include('default_board.pl').
-:- include('utils.pl').
 :- include('logic.pl').
 
 move(Player, Piece) :-
@@ -16,8 +14,7 @@ move(Player, Piece) :-
     check_connections),!,
     \+ cancel(Xdest, Ydest).
 
-special_pawn(Player) :-
-    ansi_format([fg(green)],'Pawn can move immediatly after being played.', []), nl,
+special_power_on_placement(pawn, Player) :-
     cell(Xinit, Yinit, Player, pawn),
     !,
     repeat,
@@ -27,9 +24,22 @@ special_pawn(Player) :-
         valid_move(pawn, Xinit, Yinit, Xdest, Ydest, Player),
         change_database(Xdest, Ydest, Player, pawn),
         check_virtual_limits,
-        check_connections,
-    !.
+        check_connections.
 
+special_power_on_placement(bishop, Player) :-
+    only_kings_on_board(Player);
+    (!,
+    repeat,
+        read_player_piece(TargetPlayer, Piece),
+        Piece \== king, cell(X, Y, TargetPlayer, Piece),
+        delete_from_database(X, Y, TargetPlayer, Piece),
+        check_connections).
+
+special_power_on_placement(_, _).    
+
+only_kings_on_board(Player) :-
+    \+((cell(_,_,Color,Piece),
+        \+(Piece == king; (Piece == bishop, Player == Color)))).
 
 valid_cell(R, C) :-
     within_limits(R, C),!,              % Ensures the position is within the board limits

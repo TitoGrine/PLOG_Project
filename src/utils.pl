@@ -27,7 +27,7 @@ virtual_vertical_limit :-
 cancel(-1, -1).
 
 read_coords_no_cancel(X, Y, Piece) :-
-    ansi_format([fg(green)],'New Position for ~s', [Piece]),
+    ansi_format([fg(green)],'Move ~s to position', [Piece]),
     read(Input),
     arg(1, Input, X), arg(2, Input, Y),
     integer(X), integer(Y).
@@ -38,11 +38,15 @@ read_coords(X, Y, Piece) :-
     arg(1, Input, X), arg(2, Input, Y),
     integer(X), integer(Y).
 
+read_player_piece(Player, Piece) :-
+    ansi_format([fg(green)],'Choose piece ("Player,Piece")', []),
+    read(Input),
+    arg(1, Input, Player), arg(2, Input, Piece),
+    piece(Piece, Player, _).
+
 choose_piece(Player, Piece) :-
     repeat,
     ansi_format([fg(green)],'Player ~s choose a piece: ', [Player]),
     read(Piece),
-    (
-        piece(Piece, Player, _);
-        (ansi_format([fg(green)],'Invalid piece.', []), nl, false)
-    ), !.
+    piece(Piece, Player, _).
+    

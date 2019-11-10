@@ -1,6 +1,4 @@
-:- include('utils.pl').
 :- include('logic.pl').
-:- include('default_board.pl').
 
 % This module handles all restrictions to when you play/place a piece
 place(Player, queen) :-
