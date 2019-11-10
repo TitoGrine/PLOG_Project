@@ -75,7 +75,7 @@ straight_horizontal_cross_enemy(Row, Ccurr, Cdest, Enemy, C_delta) :-
 straight_vertical_cross_enemy(Collumn, Rcurr, Rdest, Enemy, R_delta) :-
     Rnext is Rcurr + R_delta,!,
     \+ cell(Collumn, Rnext, Enemy, _),!,
-    ((Rnext =:= Rdest); straight_horizontal_cross_enemy(Collumn, Rnext, Rdest, Enemy, R_delta)).
+    ((Rnext =:= Rdest); straight_vertical_cross_enemy(Collumn, Rnext, Rdest, Enemy, R_delta)).
 
 diagonal_cross_enemy(Rinit, Cinit, Rdest, Cdest, Player) :-
     opposite(Player, Enemy),!,

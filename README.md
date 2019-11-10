@@ -26,4 +26,4 @@
 #### Bugs:
  - [ ] As long as there is no piece alone the move will be valid; when it creates a disconnection between 2 groups of pieces it must be invalid.
     Sugestion: Flood Fill algorithm.
- - [ ] Trying to move rook over king did not work, rook at (3,3), king at (3,2), rook should move to (3,1).
+ - [X] Trying to move rook over king did not work, rook at (3,3), king at (3,2), rook should move to (3,1).

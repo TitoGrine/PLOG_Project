@@ -18,7 +18,7 @@ move(Player, Piece) :-
 castling_move(Player, X, Y, RookX, RookY) :-
     castling_available(Player),         %Checking if the player has not used castling already
     cell(KingX, KingY, Player, king),
-    KingX == X, KingY == Y,
+    KingX == X, KingY == Y, !,
     change_database(RookX, RookY, Player, king),
     change_database(KingX, KingY, Player, rook),
     castling_done(Player).
@@ -29,11 +29,12 @@ special_power_on_placement(pawn, Player) :-
     repeat,
         change_database(Xinit, Yinit, Player, pawn),
         read_coords_no_cancel(Xdest, Ydest, pawn),
-        valid_cell(Ydest, Xdest),
+        ((Xinit == Xdest, Yinit == Ydest);                      %This allows the user to choose not to move the pawn immediatly
+        (valid_cell(Ydest, Xdest),
         valid_move(pawn, Xinit, Yinit, Xdest, Ydest, Player),
         change_database(Xdest, Ydest, Player, pawn),
         check_virtual_limits,
-        check_connections.
+        check_connections)).
 
 special_power_on_placement(bishop, Player) :-
     only_kings_on_board(Player);
