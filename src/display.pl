@@ -2,9 +2,6 @@
 :- include('logic.pl').
 :- include('draw.pl').
 
-opposite(black, white).
-opposite(white, black).
-
 % Pieces
 piece(king, black, '♚').
 piece(king, white, '♔').
@@ -18,6 +15,7 @@ piece(knight, black, '♞').
 piece(knight, white, '♘').
 piece(pawn, black, '♟').
 piece(pawn, white, '♙').
+
 
 display_board :-
     nl, draw_space, draw_title, nl,

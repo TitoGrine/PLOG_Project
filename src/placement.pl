@@ -1,16 +1,31 @@
 :- include('utils.pl').
+:- include('logic.pl').
 :- include('default_board.pl').
 
 % This module handles all restrictions to when you play/place a piece
+place(Player, queen) :-
+    \+ cell(Xinit, Yinit, Player, queen),
+    repeat,!,
+    dead(Player, queen, false),
+    read_coords(X, Y, queen),
+    (cancel(X, Y);
+     (valid_cell(Y, X, Player),
+      add_to_database(X, Y, Player, queen))),!,
+    \+ cancel(X, Y).
 
 place(Player, Piece) :-
+    \+ cell(Xinit, Yinit, Player, Piece),
     repeat,
     read_coords(X, Y, Piece),
-    valid_cell(Y, X, Player),
-    add_to_database(X, Y, Player, Piece).
+    (cancel(X, Y);
+     (valid_cell(Y, X, Player),
+      add_to_database(X, Y, Player, Piece))),!,
+    \+ cancel(X, Y).
+
 
 valid_cell(R, C, Player) :-
     within_limits(R, C),!,              % Ensures the position is within the board limits
+    within_virtual_limits(R, C),!,      % Ensures that, if there is a virtual limit, the new position doesn't break it
     \+ cell(C, R, _, _),!,              % Checks if there is already a piece in that cell
     \+ side_enemy_king(R, C, Player),!, % Ensures it is not adjacent to the enemy king
     near_same_color(R, C, Player).      % Ensures that it is connected to a piece of the same color

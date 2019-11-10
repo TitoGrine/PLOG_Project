@@ -20,8 +20,8 @@ end_game :-
     cell(BKC, BKR, black, king),
     !,
     ((check_surrounded(WKR, WKC),
-     write('The black player has won!!'));
+     ansi_format([fg(yellow)], 'The black player has won!!', []));
     (check_surrounded(BKR, BKC),
-     write('The white player has won!!'))).
+     ansi_format([fg(yellow)], 'The white player has won!!', []))).
 
 

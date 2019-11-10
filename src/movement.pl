@@ -1,5 +1,6 @@
 :- include('default_board.pl').
 :- include('utils.pl').
+:- include('logic.pl').
 
 move(Player, Piece) :-
     cell(Xinit, Yinit, Player, Piece),
@@ -7,10 +8,13 @@ move(Player, Piece) :-
     repeat,
     change_database(Xinit, Yinit, Player, Piece),
     read_coords(Xdest, Ydest, Piece),
+    (cancel(Xdest, Ydest); 
     valid_cell(Ydest, Xdest),
-    valid_move(Piece, Xinit, Yinit, Xdest, Ydest),
+    valid_move(Piece, Xinit, Yinit, Xdest, Ydest, Player),
     change_database(Xdest, Ydest, Player, Piece),
-    check_connections.
+    check_virtual_limits,
+    check_connections),!,
+    \+ cancel(Xdest, Ydest).
 
 valid_cell(R, C) :-
     within_limits(R, C),!,              % Ensures the position is within the board limits
@@ -19,6 +23,10 @@ valid_cell(R, C) :-
 check_connections :-
     \+((cell(C, R, _, _),
        \+ connected(R, C))).
+
+check_virtual_limits :-
+    \+((cell(C, R, _, _),
+       \+ within_virtual_limits(R, C))).
 
 connected(R, C) :-
     PR is R - 1, NR is R + 1,
@@ -33,14 +41,14 @@ connected(R, C) :-
      cell(PC, NR, _, _);
      cell(PC, PR, _, _)).
 
-valid_move(pawn, Xinit, Yinit, Xdest, Ydest) :-
+valid_move(pawn, Xinit, Yinit, Xdest, Ydest, Player) :-
     !,
     NextY is Yinit + 1, PrevY is Yinit - 1,
     NextX is Xinit + 1, PrevX is Xinit - 1,
     ((Xinit = Xdest, (Ydest = NextY; Ydest = PrevY));
     (Yinit = Ydest, (Xdest = NextX; Xdest = PrevX))).
 
-valid_move(king, Xinit, Yinit, Xdest, Ydest) :-
+valid_move(king, Xinit, Yinit, Xdest, Ydest, Player) :-
     !,
     NextY is Yinit + 1, PrevY is Yinit - 1,
     NextX is Xinit + 1, PrevX is Xinit - 1,
@@ -49,23 +57,27 @@ valid_move(king, Xinit, Yinit, Xdest, Ydest) :-
     (Xdest = NextX, (Ydest = NextY; Ydest = PrevY));
     (Xdest = PrevX, (Ydest = NextY; Ydest = PrevY))).
 
-valid_move(rook, Xinit, Yinit, Xdest, Ydest) :-
+valid_move(rook, Xinit, Yinit, Xdest, Ydest, Player) :-
     !,
-    (Xinit = Xdest; Yinit = Ydest).
+    (Xinit = Xdest; Yinit = Ydest),!,
+    straight_cross_enemy(Yinit, Xinit, Ydest, Xdest, Player).
 
-valid_move(bishop, Xinit, Yinit, Xdest, Ydest) :-
+valid_move(bishop, Xinit, Yinit, Xdest, Ydest, Player) :-
     !,
     Xdest \= Xinit,
     Inclination is (Ydest - Yinit) / (Xdest - Xinit),
-    (Inclination = -1; Inclination = 1).
+    (Inclination = -1; Inclination = 1),!,
+    diagonal_cross_enemy(Yinit, Xinit, Ydest, Xdest, Player).
 
-valid_move(queen, Xinit, Yinit, Xdest, Ydest) :-
+valid_move(queen, Xinit, Yinit, Xdest, Ydest, Player) :-
     !,
     (Xinit = Xdest; Yinit = Ydest;
     (Xdest \= Xinit, Inclination is (Ydest - Yinit) / (Xdest - Xinit),
-    (Inclination = -1; Inclination = 1))).
+    (Inclination = -1; Inclination = 1))),!,
+    diagonal_cross_enemy(Yinit, Xinit, Ydest, Xdest, Player),!,
+    straight_cross_enemy(Yinit, Xinit, Ydest, Xdest, Player).
 
-valid_move(knight, Xinit, Yinit, Xdest, Ydest) :-
+valid_move(knight, Xinit, Yinit, Xdest, Ydest, Player) :-
     !,
     NextY is Yinit + 1, PrevY is Yinit - 1,
     NextX is Xinit + 1, PrevX is Xinit - 1,
@@ -74,5 +86,5 @@ valid_move(knight, Xinit, Yinit, Xdest, Ydest) :-
     (((Xdest = DoubleNextX; Xdest = DoublePrevX), (Ydest = NextY; Ydest = PrevY));
     ((Ydest = DoubleNextY; Ydest = DoublePrevY), (Xdest = NextX; Xdest = PrevX))).
 
-valid_move(_, _, _, _, _) :-
+valid_move(_, _, _, _, _, _) :-
     write('Invalid move'), false.

@@ -1,17 +1,34 @@
+:- include('default_board.pl').
+:- include('utils.pl').
+
+opposite(black, white).
+opposite(white, black).
+
 % This module holds everything related to game logic
+check_queens_death :-
+    (check_queen_death(white); true),
+    (check_queen_death(black); true).
+    
+check_queen_death(Player) :-
+    cell(QC, QR, Player, queen),!,
+    check_surrounded(QR, QC),!,
+    kill_from_database(QC, QR, Player, queen).
+
 
 check_surrounded(R, C) :-
     (check_surrounded_collumn(R, C),
      check_surrounded_row(R, C)).
 
 check_surrounded_row(R, C) :-
-    R =< 0,
+    virtual_vertical_limit,
+    R =< 1,
     NR is R + 1,
     !,
     cell(C, NR, _, _).
 
 check_surrounded_row(R, C) :-
-    R >= 5,
+    virtual_vertical_limit,
+    R >= 4,
     PR is R - 1,
     !,
     cell(C, PR, _, _).
@@ -23,13 +40,15 @@ check_surrounded_row(R, C) :-
      cell(C, NR, _, _)).
 
 check_surrounded_collumn(R, C) :-
-    C =< 0,
+    virtual_horizontal_limit,
+    C =< 1,
     NC is C + 1,
     !,
     cell(NC, R, _, _).
 
 check_surrounded_collumn(R, C) :-
-    C >= 5,
+    virtual_horizontal_limit,
+    C >= 4,
     PC is C - 1,
     !,
     cell(PC, R, _, _).
@@ -39,6 +58,37 @@ check_surrounded_collumn(R, C) :-
     !,
     (cell(PC, R, _, _),
      cell(NC, R, _, _)).
+
+
+straight_cross_enemy(Rinit, Cinit, Rdest, Cdest, Player) :-
+    opposite(Player, Enemy),!,
+    \+ ((Rinit =:= Rdest), (Cinit < Cdest), \+ straight_horizontal_cross_enemy(Rinit, Cinit, Cdest, Enemy, 1)),!,
+    \+ ((Rinit =:= Rdest), (Cinit > Cdest), \+ straight_horizontal_cross_enemy(Rinit, Cinit, Cdest, Enemy, -1)),!,
+    \+ ((Cinit =:= Cdest), (Rinit < Rdest), \+ straight_vertical_cross_enemy(Cinit, Rinit, Rdest, Enemy, 1)),!,
+    \+ ((Cinit =:= Cdest), (Rinit > Rdest), \+ straight_vertical_cross_enemy(Cinit, Rinit, Rdest, Enemy, -1)).
+
+straight_horizontal_cross_enemy(Row, Ccurr, Cdest, Enemy, C_delta) :-
+    Cnext is Ccurr + C_delta,!,
+    \+ cell(Cnext, Row, Enemy, _),!,
+    ((Cnext =:= Cdest); straight_horizontal_cross_enemy(Row, Cnext, Cdest, Enemy, C_delta)).
+
+straight_vertical_cross_enemy(Collumn, Rcurr, Rdest, Enemy, R_delta) :-
+    Rnext is Rcurr + R_delta,!,
+    \+ cell(Collumn, Rnext, Enemy, _),!,
+    ((Rnext =:= Rdest); straight_horizontal_cross_enemy(Collumn, Rnext, Rdest, Enemy, R_delta)).
+
+diagonal_cross_enemy(Rinit, Cinit, Rdest, Cdest, Player) :-
+    opposite(Player, Enemy),!,
+    \+ ((Rinit < Rdest), (Cinit < Cdest), \+ diagonal_cross_enemy(Rinit, Cinit, Rdest, Cdest,  1,  1, Enemy)),!,
+    \+ ((Rinit < Rdest), (Cinit > Cdest), \+ diagonal_cross_enemy(Rinit, Cinit, Rdest, Cdest,  1, -1, Enemy)),!,
+    \+ ((Rinit > Rdest), (Cinit < Cdest), \+ diagonal_cross_enemy(Rinit, Cinit, Rdest, Cdest, -1,  1, Enemy)),!,
+    \+ ((Rinit > Rdest), (Cinit > Cdest), \+ diagonal_cross_enemy(Rinit, Cinit, Rdest, Cdest, -1, -1, Enemy)).
+
+diagonal_cross_enemy(Rcurr, Ccurr, Rdest, Cdest, R_delta, C_delta, Enemy) :-
+    Rnext is Rcurr + R_delta,
+    Cnext is Ccurr + C_delta,!,
+    \+ cell(Cnext, Rnext, Enemy, _),!,
+    ((Rnext =:= Rdest ; Cnext =:= Cdest); diagonal_cross_enemy(Rnext, Cnext, Rdest, Cdest, R_delta, C_delta, Enemy)).
 
 % Set the board back to the starting board
 reset_board :-
@@ -70,5 +120,3 @@ shift_board(Row_delta, Collumn_delta) :-
         Y is R + Row_delta,
        \+ change_database(X, Y, Color, Piece))).
 
-play_piece(R, C, Color,Piece) :-
-    assertz(cell(R, C, Color, Piece)).
