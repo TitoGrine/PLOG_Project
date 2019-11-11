@@ -1,4 +1,4 @@
-:- include('logic.pl').
+:- ensure_loaded('logic.pl').
 
 % This module makes all actual drawing in the console.
 % This way drawing details are hidden from the view clauses

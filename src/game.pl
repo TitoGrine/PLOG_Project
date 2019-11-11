@@ -1,5 +1,4 @@
-:- include('player.pl').
-:- include('logic.pl').
+:- ensure_loaded('player.pl').
 
 start_game :-
     display_board,

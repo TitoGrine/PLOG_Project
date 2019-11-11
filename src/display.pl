@@ -1,6 +1,5 @@
-:- include('default_board.pl').
-:- include('logic.pl').
-:- include('draw.pl').
+:- ensure_loaded('draw.pl').
+:- ensure_loaded('logic.pl').
 
 % Pieces
 piece(king, black, '♚').
@@ -42,5 +41,5 @@ display_piece(R, C) :-
     draw_piece(Char, Color, Opposite).
 
 display_piece(R, C) :-
-    \+cell(C, R, Color, Piece),
+    \+cell(C, R, _, _),
     draw_blank.

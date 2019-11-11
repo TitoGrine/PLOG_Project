@@ -1,8 +1,6 @@
-:- include('display.pl').
-:- include('utils.pl').
-:- include('movement.pl').
-:- include('placement.pl').
-:- include('logic.pl').
+:- ensure_loaded('display.pl').
+:- ensure_loaded('movement.pl').
+:- ensure_loaded('placement.pl').
 
 player_turn(Player) :-
     repeat,

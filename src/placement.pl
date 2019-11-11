@@ -1,8 +1,8 @@
-:- include('logic.pl').
+:- ensure_loaded('logic.pl').
 
 % This module handles all restrictions to when you play/place a piece
 place(Player, queen) :-
-    \+ cell(Xinit, Yinit, Player, queen),!,
+    \+ cell(_, _, Player, queen),!,
     dead(Player, queen, false),
     repeat,
     read_coords(X, Y, Player, queen, place),
@@ -12,7 +12,7 @@ place(Player, queen) :-
     \+ cancel(X, Y).
 
 place(Player, Piece) :-
-    \+ cell(Xinit, Yinit, Player, Piece),
+    \+ cell(_, _, Player, Piece),
     repeat,
     read_coords(X, Y, Player, Piece, place),
     (cancel(X, Y);

@@ -1,5 +1,5 @@
-:- include('default_board.pl').
-:- include('utils.pl').
+:- ensure_loaded('default_board.pl').
+:- ensure_loaded('utils.pl').
 
 opposite(black, white).
 opposite(white, black).

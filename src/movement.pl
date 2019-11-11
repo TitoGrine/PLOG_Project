@@ -1,4 +1,4 @@
-:- include('logic.pl').
+:- ensure_loaded('logic.pl').
 
 move(Player, Piece) :-
     cell(Xinit, Yinit, Player, Piece),
@@ -25,6 +25,7 @@ castling_move(Player, rook, X, Y, RookX, RookY) :-
 
 special_power_on_placement(pawn, Player) :-
     cell(Xinit, Yinit, Player, pawn),
+    display_board,
     !,
     repeat,
     change_database(Xinit, Yinit, Player, pawn),
@@ -38,6 +39,7 @@ special_power_on_placement(pawn, Player) :-
 
 special_power_on_placement(bishop, Player) :-
     only_kings_on_board(Player);
+    display_board,
     (!,
     repeat,
         read_player_piece(X, Y),
