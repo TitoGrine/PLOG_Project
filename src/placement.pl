@@ -2,10 +2,10 @@
 
 % This module handles all restrictions to when you play/place a piece
 place(Player, queen) :-
-    \+ cell(Xinit, Yinit, Player, queen),
-    repeat,!,
+    \+ cell(Xinit, Yinit, Player, queen),!,
     dead(Player, queen, false),
-    read_coords(X, Y, queen),
+    repeat,
+    read_coords(X, Y, Player, queen, place),
     (cancel(X, Y);
      (valid_cell(Y, X, Player),
       add_to_database(X, Y, Player, queen))),!,
@@ -14,7 +14,7 @@ place(Player, queen) :-
 place(Player, Piece) :-
     \+ cell(Xinit, Yinit, Player, Piece),
     repeat,
-    read_coords(X, Y, Piece),
+    read_coords(X, Y, Player, Piece, place),
     (cancel(X, Y);
      (valid_cell(Y, X, Player),
       add_to_database(X, Y, Player, Piece))),!,

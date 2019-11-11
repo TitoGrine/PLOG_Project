@@ -7,6 +7,7 @@
 player_turn(Player) :-
     repeat,
     (choose_piece(Player, Piece),
+     display_board,
      player_action(Player, Piece)
     ),!,
     readjust_board,

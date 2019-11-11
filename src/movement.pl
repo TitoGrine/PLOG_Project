@@ -4,18 +4,17 @@ move(Player, Piece) :-
     cell(Xinit, Yinit, Player, Piece),
     !,
     repeat,
-    change_database(Xinit, Yinit, Player, Piece),
-    read_coords(Xdest, Ydest, Piece),
+    read_coords(Xdest, Ydest, Player, Piece, move),
     (cancel(Xdest, Ydest);
-    (Piece == rook, castling_move(Player, Xdest, Ydest, Xinit, Yinit));
+    (castling_move(Player, Piece, Xdest, Ydest, Xinit, Yinit));
     (valid_cell(Ydest, Xdest),
     valid_move(Piece, Xinit, Yinit, Xdest, Ydest, Player),
     change_database(Xdest, Ydest, Player, Piece),
-    check_virtual_limits,
-    check_connections)),!,
-    \+ cancel(Xdest, Ydest).
+    ((check_virtual_limits,
+      check_connections); (change_database(Xinit, Yinit, Player, Piece), false)))),!,
+    \+ cancel(Xdest, Ydest). % Porque é que isto está aqui?
 
-castling_move(Player, X, Y, RookX, RookY) :-
+castling_move(Player, rook, X, Y, RookX, RookY) :-
     castling_available(Player),         %Checking if the player has not used castling already
     cell(KingX, KingY, Player, king),
     KingX == X, KingY == Y, !,
@@ -23,29 +22,35 @@ castling_move(Player, X, Y, RookX, RookY) :-
     change_database(KingX, KingY, Player, rook),
     castling_done(Player).
 
+
 special_power_on_placement(pawn, Player) :-
     cell(Xinit, Yinit, Player, pawn),
     !,
     repeat,
-        change_database(Xinit, Yinit, Player, pawn),
-        read_coords_no_cancel(Xdest, Ydest, pawn),
-        ((Xinit == Xdest, Yinit == Ydest);                      %This allows the user to choose not to move the pawn immediatly
-        (valid_cell(Ydest, Xdest),
-        valid_move(pawn, Xinit, Yinit, Xdest, Ydest, Player),
-        change_database(Xdest, Ydest, Player, pawn),
-        check_virtual_limits,
-        check_connections)).
+    change_database(Xinit, Yinit, Player, pawn),
+    read_coords_no_cancel(Xdest, Ydest, Player, pawn, move),
+    ((Xinit == Xdest, Yinit == Ydest);                      %This allows the user to choose not to move the pawn immediatly
+    (valid_cell(Ydest, Xdest),
+    valid_move(pawn, Xinit, Yinit, Xdest, Ydest, Player),
+    change_database(Xdest, Ydest, Player, pawn),
+    ((check_virtual_limits,
+      check_connections); (change_database(Xinit, Yinit, Player, pawn), false)))).
 
 special_power_on_placement(bishop, Player) :-
     only_kings_on_board(Player);
     (!,
     repeat,
-        read_player_piece(TargetPlayer, Piece),
-        Piece \== king, cell(X, Y, TargetPlayer, Piece),
+        read_player_piece(X, Y),
+        valid_removable_cell(X, Y, Player, TargetPlayer, Piece),
         delete_from_database(X, Y, TargetPlayer, Piece),
-        check_connections).
-
+        (check_connections; (change_database(X, Y, TargetPlayer, Piece), false))).
+ 
 special_power_on_placement(_, _).
+
+valid_removable_cell(X, Y, Player, TargetPlayer, Piece) :-
+    cell(X, Y, TargetPlayer, Piece),
+    Piece \== king,
+    \+ (Piece == bishop, TargetPlayer == Player).
 
 only_kings_on_board(Player) :-
     \+((cell(_,_,Color,Piece),
@@ -55,14 +60,11 @@ valid_cell(R, C) :-
     within_limits(R, C),!,              % Ensures the position is within the board limits
     \+ cell(C, R, _, _),!.              % Checks if there is already a piece in that cell
 
-% TODO: change to Flood Fill Algorithm
+
 check_connections :-
     \+((cell(C, R, _, _),
-       \+ connected(R, C))).
-
-check_virtual_limits :-
-    \+((cell(C, R, _, _),
-       \+ within_virtual_limits(R, C))).
+       \+ connected(R, C))),
+    check_for_islands.
 
 connected(R, C) :-
     PR is R - 1, NR is R + 1,
@@ -76,6 +78,33 @@ connected(R, C) :-
      cell(NC, PR, _, _);
      cell(PC, NR, _, _);
      cell(PC, PR, _, _)).
+
+check_for_islands :-
+    no_horizontal_islands(1),
+    no_vertical_islands(1).
+
+no_horizontal_islands(6) :-
+    true.
+
+no_horizontal_islands(Row) :-
+    PRow is Row - 1, NRow is Row + 1,
+    (\+((\+cell(_, Row, _, _),
+        (cell(_, PRow, _, _), cell(_, NRow, _, _)))),
+     no_horizontal_islands(NRow)).
+
+no_vertical_islands(6) :-
+    true.
+
+no_vertical_islands(Collumn) :-
+    PCollumn is Collumn - 1, NCollumn is Collumn + 1,
+    (\+((\+cell(_, Collumn, _, _),
+        (cell(_, PCollumn, _, _), cell(_, NCollumn, _, _)))),
+     no_vertical_islands(NCollumn)).
+
+
+check_virtual_limits :-
+    \+((cell(C, R, _, _),
+       \+ within_virtual_limits(R, C))).
 
 valid_move(pawn, Xinit, Yinit, Xdest, Ydest, _) :-
     !,

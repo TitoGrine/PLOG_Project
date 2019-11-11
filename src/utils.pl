@@ -26,27 +26,35 @@ virtual_vertical_limit :-
 
 cancel(-1, -1).
 
-read_coords_no_cancel(X, Y, Piece) :-
-    ansi_format([fg(green)],'Move ~s to position', [Piece]),
+read_coords_no_cancel(X, Y, Player, Piece, move) :-
+    ansi_format([fg(green)],'Move ~s ~s to cell', [Player, Piece]),
     read(Input),
     arg(1, Input, X), arg(2, Input, Y),
     integer(X), integer(Y).
 
-read_coords(X, Y, Piece) :-
-    ansi_format([fg(green)],'New Position for ~s("-1,-1" to cancel)', [Piece]),
+read_coords(X, Y, Player, Piece, move) :-
+    ansi_format([fg(green)],'Move ~s ~s to cell ("-1,-1" to cancel)', [Player, Piece]),
     read(Input),
     arg(1, Input, X), arg(2, Input, Y),
     integer(X), integer(Y).
 
-read_player_piece(Player, Piece) :-
-    ansi_format([fg(green)],'Choose piece ("Player,Piece")', []),
+read_coords(X, Y, Player, Piece, place) :-
+    ansi_format([fg(green)],'Place ~s ~s in cell ("-1,-1" to cancel)', [Player, Piece]),
     read(Input),
-    arg(1, Input, Player), arg(2, Input, Piece),
-    piece(Piece, Player, _).
+    arg(1, Input, X), arg(2, Input, Y),
+    integer(X), integer(Y).
+
+read_player_piece(X, Y) :-
+    ansi_format([fg(green)],'Choose piece to remove', []),
+    read(Input),
+    arg(1, Input, X), arg(2, Input, Y),
+    integer(X), integer(Y).
 
 choose_piece(Player, Piece) :-
     repeat,
     ansi_format([fg(green)],'Player ~s choose a piece: ', [Player]),
     read(Piece),
     piece(Piece, Player, _).
+
+cls :- write('\e[H\e[2J').
     

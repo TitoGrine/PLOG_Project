@@ -32,7 +32,8 @@ execute_menu_input(_) :-
 
 echek:-
     repeat,
-        main_menu_header,
+        nl,
+        main_menu_header,nl,
         main_menu_options,
         read(Input),
         execute_menu_input(Input),
