@@ -120,3 +120,11 @@ shift_board(Row_delta, Collumn_delta) :-
         Y is R + Row_delta,
        \+ change_database(X, Y, Color, Piece))).
 
+
+
+
+
+    
+
+
+

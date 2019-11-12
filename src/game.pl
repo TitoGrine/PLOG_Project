@@ -1,15 +1,26 @@
 :- ensure_loaded('player.pl').
+:- ensure_loaded('ai.pl').
 
 start_game :-
     display_board,
-    play(white),
+    play_player_AI(player),
     reset_board.
 
-play(Player) :- 
+play_player_player(Player) :- 
     player_turn(Player),
     display_board,
     next_player(Player, NextPlayer),
-    (end_game ; play(NextPlayer)).
+    (end_game ; play_player_player(NextPlayer)).
+
+play_player_AI(player) :-
+    player_turn(white),
+    display_board,
+    (end_game ; play_player_AI(ai)).
+
+play_player_AI(ai) :-
+    ai_turn(black),
+    display_board,
+    (end_game ; play_player_AI(player)).
 
 next_player(white, black).
 next_player(black, white).

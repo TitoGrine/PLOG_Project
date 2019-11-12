@@ -12,7 +12,23 @@ move(Player, Piece) :-
     change_database(Xdest, Ydest, Player, Piece),
     ((check_virtual_limits,
       check_connections); (change_database(Xinit, Yinit, Player, Piece), false)))),!,
-    \+ cancel(Xdest, Ydest). % Porque é que isto está aqui?
+    \+ cancel(Xdest, Ydest).
+
+move_ai(Player, Piece, Xdest, Ydest) :-
+    cell(_, _, Player, Piece),!,
+    change_database(Xdest, Ydest, Player, Piece).
+
+check_movement(Player, Piece, Xdest, Ydest):-
+    cell(Xinit, Yinit, Player, Piece),!,
+    (check_castling(Player, Piece, Xdest, Ydest);
+    (valid_cell(Ydest, Xdest),
+    valid_move(Piece, Xinit, Yinit, Xdest, Ydest, Player),
+    change_database(Xdest, Ydest, Player, Piece),!,
+    ((check_virtual_limits, check_connections, change_database(Xinit, Yinit, Player, Piece)); \+ change_database(Xinit, Yinit, Player, Piece)))),!.
+
+check_castling(Player, rook, X, Y) :-
+    castling_available(Player),
+    cell(Y, X, king, Player).
 
 castling_move(Player, rook, X, Y, RookX, RookY) :-
     castling_available(Player),         %Checking if the player has not used castling already
@@ -48,6 +64,22 @@ special_power_on_placement(bishop, Player) :-
         (check_connections; (change_database(X, Y, TargetPlayer, Piece), false))).
  
 special_power_on_placement(_, _).
+
+special_power_on_placement_ai(pawn, Player, [Xdest, Ydest]) :-
+    display_board,
+    change_database(Xdest, Ydest, Player, pawn).
+
+special_power_on_placement_ai(bishop, Player, [X, Y]) :-
+    only_kings_on_board(Player);
+    display_board,
+    delete_from_database(X, Y, _, _).
+ 
+special_power_on_placement_ai(_, _).
+
+possible_removable(Player, TargetPlayer, Piece, X ,Y) :-
+    valid_removable_cell(X, Y, Player, TargetPlayer, Piece),
+    delete_from_database(X, Y, TargetPlayer, Piece),!,
+    ((check_connections, change_database(X, Y, TargetPlayer, Piece)) ; \+change_database(X, Y, TargetPlayer, Piece)),!.
 
 valid_removable_cell(X, Y, Player, TargetPlayer, Piece) :-
     cell(X, Y, TargetPlayer, Piece),
@@ -152,6 +184,3 @@ valid_move(knight, Xinit, Yinit, Xdest, Ydest, _) :-
     DoubleNextX is Xinit + 2, DoublePrevX is Xinit - 2,
     (((Xdest = DoubleNextX; Xdest = DoublePrevX), (Ydest = NextY; Ydest = PrevY));
     ((Ydest = DoubleNextY; Ydest = DoublePrevY), (Xdest = NextX; Xdest = PrevX))).
-
-valid_move(_, _, _, _, _, _) :-
-    ansi_format([fg(green)],'Invalid move.', []), false.

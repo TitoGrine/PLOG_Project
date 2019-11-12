@@ -20,6 +20,19 @@ place(Player, Piece) :-
       add_to_database(X, Y, Player, Piece))),!,
     \+ cancel(X, Y).
 
+place_ai(Player, Piece, X, Y) :-
+    \+ cell(_, _, Player, Piece),
+    add_to_database(X, Y, Player, Piece).
+
+check_placement(Player, queen, X, Y) :-
+    \+ cell(_, _, Player, queen),!,
+    dead(Player, queen, false),!,
+    valid_cell(Y, X, Player).
+
+check_placement(Player, Piece, X, Y) :-
+    \+ cell(_, _, Player, Piece),!,
+    valid_cell(Y, X, Player).
+
 
 valid_cell(R, C, Player) :-
     within_limits(R, C),!,              % Ensures the position is within the board limits

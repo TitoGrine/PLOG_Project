@@ -50,6 +50,9 @@ execute_menu_input(5) :- !.
 execute_menu_input(_) :-
     write('Invalid Input!'), false.
 
+print10 :-
+    forall((between(0, 5, X),between(0, 5, Y)), (write(X), write(' '), write(Y), nl)).
+    
 echek:-
     repeat,
         nl,
