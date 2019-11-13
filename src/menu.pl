@@ -39,21 +39,16 @@ instructions_menu :-
     repeat, read(Input), Input == menu, !.
 
 execute_menu_input(1) :-
-    start_game, !.
-execute_menu_input(2) :- !.
-    %!, Input =:= 2, start_game.
-execute_menu_input(3) :- !.
-    %!, Input =:= 3, start_game.
+    start_game(player, player), !.
+execute_menu_input(2) :-
+    start_game(player, ai, random), !.
+execute_menu_input(3) :-
+    start_game(ai, ai, random), !.
 execute_menu_input(4) :-
-    !, instructions_menu.
+    instructions_menu, !.
 execute_menu_input(5) :- !.
-execute_menu_input(_) :-
-    write('Invalid Input!'), false.
-
-print10 :-
-    forall((between(0, 5, X),between(0, 5, Y)), (write(X), write(' '), write(Y), nl)).
     
-echek:-
+play:-
     repeat,
         nl,
         main_menu_header,nl,

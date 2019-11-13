@@ -1,11 +1,8 @@
 :- ensure_loaded('placement.pl').
 
-ai_turn(Player) :-
-    write('AI turn'),
+ai_turn(Player, Difficulty) :-
     valid_moves(Player, Moves),
-    write('Valid Moves done'),
-    choose_move(random, Moves, Move),
-    write('Choose moves'),
+    choose_move(Difficulty, Moves, Move),
     ai_action(Player, Move),
     readjust_board,
     check_queens_death.
@@ -14,7 +11,6 @@ choose_move(random, Moves, Move) :-
     random_member(Move, Moves).
 
 ai_action(Player, [Piece, X, Y]) :-
-    format('Piece: ~s | X=~d ; Y=~d', [Piece, X, Y]),
     move_ai(Player, Piece, X, Y);
     (place_ai(Player, Piece, X, Y), 
     ((valid_special_play(Piece, Player, Moves),
