@@ -114,10 +114,10 @@ connected(R, C) :-
      cell(PC, PR, _, _)).
 
 check_for_islands :-
-    no_horizontal_islands(1),
+    no_horizontal_islands(1),!,
     no_vertical_islands(1).
 
-no_horizontal_islands(6) :-
+no_horizontal_islands(5) :-
     true.
 
 no_horizontal_islands(Row) :-
@@ -126,13 +126,13 @@ no_horizontal_islands(Row) :-
         (cell(_, PRow, _, _), cell(_, NRow, _, _)))),
      no_horizontal_islands(NRow)).
 
-no_vertical_islands(6) :-
+no_vertical_islands(5) :-
     true.
 
 no_vertical_islands(Collumn) :-
     PCollumn is Collumn - 1, NCollumn is Collumn + 1,
-    (\+((\+cell(_, Collumn, _, _),
-        (cell(_, PCollumn, _, _), cell(_, NCollumn, _, _)))),
+    (\+((\+cell(Collumn, _, _, _),
+        (cell(PCollumn, _, _, _), cell(NCollumn, _, _, _)))),
      no_vertical_islands(NCollumn)).
 
 
