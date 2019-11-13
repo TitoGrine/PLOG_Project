@@ -10,6 +10,8 @@ ai_turn(Player, Difficulty) :-
 choose_move(random, Moves, Move) :-
     random_member(Move, Moves).
 
+choose_move(medium, [Best | _], Best).
+
 ai_action(Player, [Piece, X, Y]) :-
     move_ai(Player, Piece, X, Y);
     (place_ai(Player, Piece, X, Y), 

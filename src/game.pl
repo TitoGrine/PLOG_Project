@@ -11,9 +11,9 @@ start_game(player, ai, Difficulty) :-
     play_player_AI(player, Difficulty),
     reset_board.
 
-start_game(ai, ai, Difficulty) :-
+start_game(ai, ai, DifficultyWhite, DifficultyBlack) :-
     display_board,
-    play_AI_AI(white, Difficulty),
+    play_AI_AI(white, DifficultyWhite, DifficultyBlack),
     reset_board.
 
 play_player_player(Player) :- 
@@ -32,11 +32,11 @@ play_player_AI(ai, Difficulty) :-
     display_board,
     (game_over(_) ; play_player_AI(player, Difficulty)).
 
-play_AI_AI(Player, Difficulty) :-
-    ai_turn(Player, Difficulty),
+play_AI_AI(Player, CurrentDifficulty, NextDifficulty) :-
+    ai_turn(Player, CurrentDifficulty),
     display_board,
     next_player(Player, NextPlayer),
-    (game_over(_) ; play_AI_AI(NextPlayer, Difficulty)).
+    (game_over(_) ; play_AI_AI(NextPlayer, NextDifficulty, CurrentDifficulty)).
 
 next_player(white, black).
 next_player(black, white).
@@ -49,5 +49,3 @@ game_over(Winner) :-
      ansi_format([fg(yellow)], 'The black player has won!!', []), Winner = black);
     (check_surrounded(BKR, BKC),
      ansi_format([fg(yellow)], 'The white player has won!!', []), Winner = white)).
-
-
