@@ -12,7 +12,7 @@
  - [X] When a bishop is placed, make the player to remove a piece from the board (in the same turn) *imp. use delete_from_database*
  - [X] When a player chooses the rook (movement), be able to swap positions with the player's king once per game
  - [X] Make the main menu to choose game mode
- - [ ] Implement game mode with random AI
+ - [X] Implement game mode with random AI
  - [ ] Implement game mode with smart AI (at least one level of decision)
  - [ ] Try to remove as many warnings as possible
 
@@ -26,3 +26,5 @@
 #### Bugs:
  - [X] As long as there is no piece alone the move will be valid; when it creates a disconnection between 2 groups of pieces it must be invalid.
  - [X] Trying to move rook over king did not work, rook at (3,3), king at (3,2), rook should move to (3,1).
+ - [ ] Braking the connection with the queen did not cause an error when the game ended; screenshot was sent to Messenger
+ - [ ] Should there be a draw message when both kings are surrounded in the same move?
