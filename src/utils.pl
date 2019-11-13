@@ -69,17 +69,17 @@ choose_piece(Player, Piece) :-
     piece(Piece, Player, _).
 
 %Determines the max value on a list
-max_list([], Best, Best).
+max_value_list([], Best, Best).
 
-max_list([Head| Rest], Current, Best) :-
-    greater(Head, Current), max_list(Rest, Head, Best).
+max_value_list([Head| Rest], Current, Best) :-
+    greater(Head, Current), max_value_list(Rest, Head, Best).
 
-max_list([Head| Rest], Current, Best) :-
-    greater(Current, Head), max_list(Rest, Current, Best).
+max_value_list([Head| Rest], Current, Best) :-
+    greater(Current, Head), max_value_list(Rest, Current, Best).
 
-max_list([Head|Rest], Best) :-
-    max_list(Rest, Head, Best).
+max_value_list([Head|Rest], Best) :-
+    max_value_list(Rest, Head, Best),!.
 
 %Compares the values between two moves
 greater([Value1|Rest1], [Value2|Rest2]) :-
-    Value1 > Value2.
+    Value1 >= Value2.

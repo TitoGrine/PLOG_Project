@@ -5,6 +5,52 @@ opposite(black, white).
 opposite(white, black).
 
 % This module holds everything related to game logic
+
+count_attackers(Player, Piece, Number) :-
+    (cell(X, Y, Player, Piece), count_surrounded(X, Y, Number));
+    Number is 0.
+
+count_surrounded(X, Y, Number) :-
+    count_surrounded_collumn(X, Y, N1),
+    count_surrounded_row(X, Y, N2),
+    Number is N1 + N2.
+
+count_surrounded_row(R, C, N) :-
+    virtual_vertical_limit,
+    R =< 1,
+    NR is R + 1,
+    ((cell(C, NR, _, _), N is 1);(N is 0)).
+
+count_surrounded_row(R, C, N) :-
+    virtual_vertical_limit,
+    R >= 4,
+    PR is R - 1,
+    ((cell(C, PR, _, _), N is 1);(N is 0)).
+
+count_surrounded_row(R, C, N) :-
+    PR is R - 1, NR is R + 1,
+    ((cell(C, PR, _, _), N1 is 1);(N1 is 0)),
+    ((cell(C, NR, _, _), N2 is 1);(N2 is 0)),
+    N is N1 + N2.
+
+count_surrounded_collumn(R, C, N) :-
+    virtual_horizontal_limit,
+    C =< 1,
+    NC is C + 1,
+    ((cell(NC, R, _, _), N is 1);(N is 0)).
+
+count_surrounded_collumn(R, C, N) :-
+    virtual_horizontal_limit,
+    C >= 4,
+    PC is C - 1,
+    ((cell(PC, R, _, _), N is 1);(N is 0)).
+
+count_surrounded_collumn(R, C, N) :-
+    PC is C - 1, NC is C + 1,
+    ((cell(PC, R, _, _), N1 is 1);(N1 is 0)),
+    ((cell(NC, R, _, _), N2 is 1);(N2 is 0)),
+    N is N1 + N2.
+
 check_queens_death :-
     (check_queen_death(white); true),
     (check_queen_death(black); true).

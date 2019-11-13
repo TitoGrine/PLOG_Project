@@ -41,9 +41,9 @@ instructions_menu :-
 execute_menu_input(1) :-
     start_game(player, player), !.
 execute_menu_input(2) :-
-    start_game(player, ai, random), !.
+    start_game(player, ai, high), !.
 execute_menu_input(3) :-
-    start_game(ai, ai, random, random), !.
+    start_game(ai, ai, high, high), !.
 execute_menu_input(4) :-
     instructions_menu, !.
 execute_menu_input(5) :- !.
