@@ -80,6 +80,10 @@ max_value_list([Head| Rest], Current, Best) :-
 max_value_list([Head|Rest], Best) :-
     max_value_list(Rest, Head, Best),!.
 
+
+make_best_moves_list(ValuedMoves, BestValue, BestMoves) :-
+    findall(Info, (member([Value|Info], ValuedMoves), Value =:= BestValue), BestMoves).
+
 %Compares the values between two moves
 greater([Value1|_], [Value2|_]) :-
     Value1 >= Value2.

@@ -10,9 +10,11 @@ ai_turn(Player, Level) :-
 choose_move(random, _, Moves, Move) :-
     random_member(Move, Moves).
 
-choose_move(high, Player, Moves, Best) :-
+choose_move(high, Player, Moves, BestMove) :-
     calculate_moves_value(Player, Moves, ValuedMoves),
-    max_value_list(ValuedMoves, [_|Best]).
+    max_value_list(ValuedMoves, [BestValue|_]),
+    make_best_moves_list(ValuedMoves, BestValue, BestMoves),
+    random_member(BestMove, BestMoves).
 
 choose_special_move(random, _, _, Moves, Move) :-
     random_member(Move, Moves).
