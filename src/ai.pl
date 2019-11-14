@@ -70,7 +70,7 @@ value(Player, Piece, X, Y, Value) :-
     ((V3 =:= -100, Value is V3);
      %In this case, it is very likely that the ai can win the game with a special pawn move
      (Piece == pawn, \+cell(_, _, Player, pawn), V2 >= 1, V3 >= 6, Value is 120 + (0.1 * V2) + V3);
-      Value is (0 + (1.2 * V1) + (0.1 * V2) + V3)).
+      Value is (0 + (1.2 * V1) + V3)). % Next_move : (0.1 * V2) (this was making the ai too much predictable)
 
 value_offensive(Player, Value, Piece, X, Y) :-
     \+ cell(_, _, Player, Piece),
@@ -146,7 +146,7 @@ add_defensive_values(NKing, NQueen, Value) :-
 
 %===============================================
 % Predicates to evaluate a special move
-add_special_value(Player, [X, Y], [Value, X, Y]) :-
+add_special_value(Player, Piece, [X, Y], [Value, X, Y]) :-
     value_special(Player, Piece, X, Y, Value).
 
 value_special(Player, pawn, X, Y, Value) :-
