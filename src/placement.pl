@@ -41,14 +41,17 @@ valid_cell(R, C, Player) :-
     \+ side_enemy_king(R, C, Player),!, % Ensures it is not adjacent to the enemy king
     near_same_color(R, C, Player).      % Ensures that it is connected to a piece of the same color
 
+side_piece(R, C, Color, Piece) :-
+    cell(PieceC, PieceR, Color, Piece),
+    PrevR is PieceR - 1, NextR is PieceR + 1,
+    PrevC is PieceC - 1, NextC is PieceC + 1,
+    !,
+    ((R =:= PieceR, (C =:= PrevC; C =:= NextC));
+     (C =:= PieceC, (R =:= PrevR; R =:= NextR))).
+
 side_enemy_king(R, C, Color) :-
     opposite(Color, Opposite),
-    cell(KingC, KingR, Opposite, king),
-    PKR is KingR - 1, NKR is KingR + 1,
-    PKC is KingC - 1, NKC is KingC + 1,
-    !,
-    ((R =:= KingR, (C =:= PKC; C =:= NKC));
-     (C =:= KingC, (R =:= PKR; R =:= NKR))).
+    side_piece(R, C, Opposite, king).
 
 near_same_color(R, C, Color) :-
     PR is R - 1, NR is R + 1,

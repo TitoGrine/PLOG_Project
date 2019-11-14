@@ -81,5 +81,5 @@ max_value_list([Head|Rest], Best) :-
     max_value_list(Rest, Head, Best),!.
 
 %Compares the values between two moves
-greater([Value1|Rest1], [Value2|Rest2]) :-
+greater([Value1|_], [Value2|_]) :-
     Value1 >= Value2.
