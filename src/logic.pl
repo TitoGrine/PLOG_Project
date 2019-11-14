@@ -19,13 +19,13 @@ count_surrounded_row(R, C, N) :-
     virtual_vertical_limit,
     R =< 1,
     NR is R + 1,
-    ((cell(C, NR, _, _), N is 1);(N is 0)).
+    ((cell(C, NR, _, _), N is 2);(N is 1)).
 
 count_surrounded_row(R, C, N) :-
     virtual_vertical_limit,
     R >= 4,
     PR is R - 1,
-    ((cell(C, PR, _, _), N is 1);(N is 0)).
+    ((cell(C, PR, _, _), N is 2);(N is 1)).
 
 count_surrounded_row(R, C, N) :-
     PR is R - 1, NR is R + 1,
@@ -37,13 +37,13 @@ count_surrounded_collumn(R, C, N) :-
     virtual_horizontal_limit,
     C =< 1,
     NC is C + 1,
-    ((cell(NC, R, _, _), N is 1);(N is 0)).
+    ((cell(NC, R, _, _), N is 2);(N is 1)).
 
 count_surrounded_collumn(R, C, N) :-
     virtual_horizontal_limit,
     C >= 4,
     PC is C - 1,
-    ((cell(PC, R, _, _), N is 1);(N is 0)).
+    ((cell(PC, R, _, _), N is 2);(N is 1)).
 
 count_surrounded_collumn(R, C, N) :-
     PC is C - 1, NC is C + 1,
