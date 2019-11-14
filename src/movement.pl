@@ -28,7 +28,7 @@ check_movement(Player, Piece, Xdest, Ydest):-
 
 check_castling(Player, rook, X, Y) :-
     castling_available(Player),
-    cell(Y, X, king, Player).
+    cell(X, Y, Player, king).
 
 castling_move(Player, rook, X, Y, RookX, RookY) :-
     castling_available(Player),         %Checking if the player has not used castling already
