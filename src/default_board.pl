@@ -1,6 +1,7 @@
 :- dynamic(cell/4).
 :- dynamic(dead/3).
 :- dynamic(castling_available/1).
+:- dynamic(visited/2).
 
 add_to_database(X, Y, Color, Piece) :-
     assertz(cell(X, Y, Color, Piece)).
@@ -19,6 +20,15 @@ change_database(X, Y, Color, Piece) :-
 
 castling_done(Color) :-
     retractall(castling_available(Color)).
+
+check_visited(R, C) :-
+    visited(R, C).
+
+add_visited(R, C) :-
+    assertz(visited(R, C)).
+
+clean_visited :-
+    retractall(visited(_, _)).
 
 % Starting board
 

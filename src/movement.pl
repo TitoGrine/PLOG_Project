@@ -32,11 +32,10 @@ check_castling(Player, rook, X, Y) :-
     cell(X, Y, Player, king).
 
 castling_move(Player, rook, X, Y, RookX, RookY) :-
-    castling_available(Player),         %Checking if the player has not used castling already
-    cell(KingX, KingY, Player, king),
-    KingX == X, KingY == Y, !,
+    castling_available(Player),!,        % Checks if the player has not used castling already
+    cell(X, Y, Player, king),
     change_database(RookX, RookY, Player, king),
-    change_database(KingX, KingY, Player, rook),
+    change_database(X, Y, Player, rook),
     castling_done(Player).
 
 
@@ -93,49 +92,37 @@ only_kings_on_board(Player) :-
 
 valid_cell(R, C) :-
     within_limits(R, C),!,              % Ensures the position is within the board limits
-    \+ cell(C, R, _, _),!.              % Checks if there is already a piece in that cell
+    \+cell(C, R, _, _).                 % Checks if there is already a piece in that cell
 
 
 check_connections :-
+    cell(C, R, _, _),
+    connected_board([[R, C]]),!,
+    ((all_visited, clean_visited) ; (\+ clean_visited)).
+
+connected_board([]).
+connected_board([[] | Others]) :-
+    connected_board(Others).
+connected_board([[R, C] | Others]) :-
+    ((check_visited(R, C), Next = Others) ; 
+    (add_visited(R, C),
+     PR is R - 1, NR is R + 1,
+     PC is C - 1, NC is C + 1,
+     !,
+     (((cell(PC, PR, _, _), Cell1 = [PR, PC]) ; Cell1 = []),
+      ((cell( C, PR, _, _), Cell2 = [PR,  C]) ; Cell2 = []),
+      ((cell(NC, PR, _, _), Cell3 = [PR, NC]) ; Cell3 = []),
+      ((cell(PC,  R, _, _), Cell4 = [ R, PC]) ; Cell4 = []),
+      ((cell(NC,  R, _, _), Cell5 = [ R, NC]) ; Cell5 = []),
+      ((cell(PC, NR, _, _), Cell6 = [NR, PC]) ; Cell6 = []),
+      ((cell( C, NR, _, _), Cell7 = [NR,  C]) ; Cell7 = []),
+      ((cell(NC, NR, _, _), Cell8 = [NR, NC]) ; Cell8 = [])),
+     append(Others, [Cell1, Cell2, Cell3, Cell4, Cell5, Cell6, Cell7, Cell8], Next))),
+    connected_board(Next).
+    
+all_visited :-
     \+((cell(C, R, _, _),
-       \+ connected(R, C))),
-    check_for_islands.
-
-connected(R, C) :-
-    PR is R - 1, NR is R + 1,
-    PC is C - 1, NC is C + 1,
-    !,
-    (cell(NC, R, _, _);
-     cell(PC, R, _, _);
-     cell(C, NR, _, _);
-     cell(C, PR, _, _);
-     cell(NC, NR, _, _);
-     cell(NC, PR, _, _);
-     cell(PC, NR, _, _);
-     cell(PC, PR, _, _)).
-
-check_for_islands :-
-    no_horizontal_islands(1),!,
-    no_vertical_islands(1).
-
-no_horizontal_islands(5) :-
-    true.
-
-no_horizontal_islands(Row) :-
-    PRow is Row - 1, NRow is Row + 1,
-    (\+((\+cell(_, Row, _, _),
-        (cell(_, PRow, _, _), cell(_, NRow, _, _)))),
-     no_horizontal_islands(NRow)).
-
-no_vertical_islands(5) :-
-    true.
-
-no_vertical_islands(Collumn) :-
-    PCollumn is Collumn - 1, NCollumn is Collumn + 1,
-    (\+((\+cell(Collumn, _, _, _),
-        (cell(PCollumn, _, _, _), cell(NCollumn, _, _, _)))),
-     no_vertical_islands(NCollumn)).
-
+        \+check_visited(R, C))).
 
 check_virtual_limits :-
     \+((cell(C, R, _, _),
