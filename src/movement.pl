@@ -15,8 +15,9 @@ move(Player, Piece) :-
     \+ cancel(Xdest, Ydest).
 
 move_ai(Player, Piece, Xdest, Ydest) :-
-    cell(_, _, Player, Piece),!,
-    change_database(Xdest, Ydest, Player, Piece).
+    cell(Xinit, Yinit, Player, Piece),!,
+    (castling_move(Player, Piece, Xdest, Ydest, Xinit, Yinit);
+     change_database(Xdest, Ydest, Player, Piece)).
 
 check_movement(Player, Piece, Xdest, Ydest):-
     cell(Xinit, Yinit, Player, Piece),!,

@@ -12,7 +12,7 @@ choose_move(random, _, Moves, Move) :-
 
 choose_move(high, Player, Moves, BestMove) :-
     calculate_moves_value(Player, Moves, ValuedMoves),
-    max_value_list(ValuedMoves, [BestValue|_]),
+    max_value_list(ValuedMoves, BestValue),
     make_best_moves_list(ValuedMoves, BestValue, BestMoves),
     random_member(BestMove, BestMoves).
 
@@ -21,7 +21,7 @@ choose_special_move(random, _, _, Moves, Move) :-
 
 choose_special_move(high, Player, Piece, Moves, BestMove) :-
     calculate_special_moves_value(Player, Piece, Moves, ValuedMoves),
-    max_value_list(ValuedMoves, [BestValue|_]),
+    max_value_list(ValuedMoves, BestValue),
     make_best_moves_list(ValuedMoves, BestValue, BestMoves),
     random_member(BestMove, BestMoves).
 
@@ -29,7 +29,7 @@ ai_action(Player, Level, [Piece, X, Y]) :-
     move_ai(Player, Piece, X, Y);
     (place_ai(Player, Piece, X, Y), 
     ((valid_special_play(Piece, Player, Moves),
-      choose_special_move(Level, Player, Piece, Moves, Move),
+      choose_special_move(Level, Player, Piece, Moves, Move),!,
       special_power_on_placement_ai(Piece, Player, Move)); true)).
 
 valid_moves(Player, PossibleMoves) :-
@@ -63,14 +63,21 @@ calculate_special_moves_value(Player, Piece, [Move|Rest], [ValuedMove|ValuedMove
 add_value(Player, [Piece, X, Y], [Value, Piece, X, Y]) :-
     value(Player, Piece, X, Y, Value).
 
+value(Player, pawn, X, Y, Value) :-
+    \+ cell(_, _, Player, pawn),
+    value_offensive(Player, V1, pawn, X, Y),
+    value_next_move(Player, V2, pawn, X, Y),
+    value_defensive(Player, V3, pawn, X, Y),
+    ((V3 =:= -100, Value is V3);
+     (V2 >= 1, V3 >= 6, Value is 120); %In this case, it is very likely that the ai can win the game with a special pawn move
+      Value is (0 + (1.2 * V1) + V3)). % Next_move : (0.1 * V2) (this was making the ai too much predictable)
+
 value(Player, Piece, X, Y, Value) :-
     value_offensive(Player, V1, Piece, X, Y),
     value_next_move(Player, V2, Piece, X, Y),
     value_defensive(Player, V3, Piece, X, Y),
     ((V3 =:= -100, Value is V3);
-     %In this case, it is very likely that the ai can win the game with a special pawn move
-     (Piece == pawn, \+cell(_, _, Player, pawn), V2 >= 1, V3 >= 6, Value is 120 + (0.1 * V2) + V3);
-      Value is (0 + (1.2 * V1) + V3)). % Next_move : (0.1 * V2) (this was making the ai too much predictable)
+      Value is (0 + (1.2 * V1) + (0.05 * V2) + V3)). % Next_move :  (this was making the ai too much predictable)
 
 value_offensive(Player, Value, Piece, X, Y) :-
     \+ cell(_, _, Player, Piece),
@@ -111,14 +118,14 @@ value_next_move(Player, Value, Piece, X, Y) :-
     add_next_move_values(Player, Moves, 0, Value),
     change_database(X0, Y0, Player, Piece).
 
-add_next_move_values(_, [], Acc, Acc).
-add_next_move_values(Player, [[X, Y]| Rest], Current, Acc) :-
+add_next_move_values(_, [], FinalValue, FinalValue).
+add_next_move_values(Player, [[X, Y]| Rest], CurrentValue, FinalValue) :-
     opposite(Player, Enemy),
-    ((side_piece(X, Y, Enemy, king), New is Current + 1);
-     (side_piece(X, Y, Enemy, queen), New is Current + 0.4);
-     (side_piece(X, Y, Enemy, king), side_piece(X, Y, Enemy, king), New is Current + 1.4);
-     (New is Current)),
-    add_next_move_values(Player, Rest, New, Acc).
+    ((side_piece(X, Y, Enemy, king), side_piece(X, Y, Enemy, queen), NewValue is CurrentValue + 1.5);
+     (side_piece(X, Y, Enemy, king), NewValue is CurrentValue + 1);
+     (side_piece(X, Y, Enemy, queen), NewValue is CurrentValue + 0.5);
+     (NewValue is CurrentValue)),
+    add_next_move_values(Player, Rest, NewValue, FinalValue).
 
 value_defensive(Player, Value, Piece, X, Y) :-
     \+ cell(_, _, Player, Piece),
@@ -142,9 +149,8 @@ add_defensive_values(NKing, 4, Value) :-
     Value is -2.0 * NKing - 10.
 add_defensive_values(NKing, NQueen, Value) :-
     Value is -2.0 * NKing - NQueen.
-%================================================
 
-%===============================================
+% ===============================================
 % Predicates to evaluate a special move
 add_special_value(Player, Piece, [X, Y], [Value, X, Y]) :-
     value_special(Player, Piece, X, Y, Value).
@@ -155,26 +161,27 @@ value_special(Player, pawn, X, Y, Value) :-
 value_special(Player, bishop, X, Y, Value) :-
     opposite(Player, Enemy),
     cell(X, Y, PieceColor, Piece),
-    ((Enemy = PieceColor, value_offensive_remove(Enemy, V1, X, Y));
-    value_defensive_remove(Player, V1, X, Y)),
+    ((Player == PieceColor, value_defensive_remove(Enemy, V1, X, Y));  % If it is the players king/queen then the removal is strongly encouraged.
+                            value_offensive_remove(Player, V1, X, Y)), % Otherwise it is strongly disencouraged.
     value_piece_remove(Player, PieceColor, Piece, V2),
     count_attackers(PieceColor, king, NKing),
-    Value is 0 + NKing * V1 + V2.
-    %The more the number of pieces around a king, the more important is that removal.
-    %If it is the friendly king then the removal is strongly encouraged. Otherwise it is strongly disencouraged
+    Value is 0 + NKing * V1 + V2. % The higher the number of pieces around a king, the more important is the removal of a piece around it.
 
-%The following predicates atribute a value to each piece removal
-% If the piece to be removed is a frindly piece, then it is not encouraged to remove it
+% The following predicates atribute a value to each piece removal
+% If the piece to be removed is a players piece, then it is not encouraged to remove it
 value_piece_remove(Player, Player, queen, -2).
 value_piece_remove(Player, Player, rook, -1.5).
 value_piece_remove(Player, Player, knight, -1).
 value_piece_remove(Player, Player, pawn, -0.5).
-% When the piece is an enemy piece, then the ai is encouraged to do so
+% When the piece is an enemy piece, then the ai is encouraged to do remove it
 value_piece_remove(_, _, bishop, 0).
 value_piece_remove(_, _, pawn, 0.5).
 value_piece_remove(_, _, knight, 1).
 value_piece_remove(_, _, rook, 1.5).
 value_piece_remove(_, _, queen, 2).
+
+value_defensive_remove(Player, Value, X, Y) :-
+    side_piece(X, Y, Player, king),!, side_piece(X, Y, Player, queen), Value is 3.
 
 value_defensive_remove(Player, Value, X, Y) :-
     side_piece(X, Y, Player, king), Value is 2.
@@ -183,6 +190,9 @@ value_defensive_remove(Player, Value, X, Y) :-
     side_piece(X, Y, Player, queen), Value is 1.
 
 value_defensive_remove(_, 0, _, _).
+
+value_offensive_remove(Enemy, Value, X, Y) :-
+    side_piece(X, Y, Enemy, king),!, side_piece(X, Y, Enemy, queen), Value is -3.
 
 value_offensive_remove(Enemy, Value, X, Y) :-
     side_piece(X, Y, Enemy, king), Value is -2.

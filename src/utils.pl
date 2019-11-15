@@ -68,7 +68,7 @@ choose_piece(Player, Piece) :-
     read(Piece),
     piece(Piece, Player, _).
 
-%Determines the max value on a list
+% Determines the max value on a list
 max_value_list([], Best, Best).
 
 max_value_list([Head| Rest], Current, Best) :-
@@ -78,12 +78,21 @@ max_value_list([Head| Rest], Current, Best) :-
     greater(Current, Head), max_value_list(Rest, Current, Best).
 
 max_value_list([Head|Rest], Best) :-
-    max_value_list(Rest, Head, Best),!.
-
+    max_value_list(Rest, Head, [Best| _]),!.
 
 make_best_moves_list(ValuedMoves, BestValue, BestMoves) :-
-    findall(Info, (member([Value|Info], ValuedMoves), Value =:= BestValue), BestMoves).
+    findall(Info, (member([Value|Info], ValuedMoves), Value =:= BestValue), OptimalMoves),!,
+    prevent_cycles(ValuedMoves, BestValue, OptimalMoves, BestMoves).
 
-%Compares the values between two moves
+% Prevents the game entering an infinite cycle, when playing machine vs machine, and the best plays are limited (1-2)
+prevent_cycles(ValuedMoves, BestValue, OptimalMoves, BestMoves) :-
+    length(OptimalMoves, Length), length(ValuedMoves, TotalLength),!,
+    (((Length > 1 ; TotalLength =:= Length),
+      append(OptimalMoves, [], BestMoves));
+     ((repeat, random_member([RandomValue | Rest], ValuedMoves), RandomValue < BestValue),!, % Ensures the random move isn't an optimal move
+      append(OptimalMoves, [Rest], BestMoves))).
+
+
+% Compares the values between two moves
 greater([Value1|_], [Value2|_]) :-
     Value1 >= Value2.
