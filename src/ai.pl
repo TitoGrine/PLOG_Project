@@ -77,7 +77,7 @@ value(Player, Piece, X, Y, Value) :-
     value_next_move(Player, V2, Piece, X, Y),
     value_defensive(Player, V3, Piece, X, Y),
     ((V3 =:= -100, Value is V3);
-      Value is (0 + (1.2 * V1) + (0.05 * V2) + V3)). % Next_move :  (this was making the ai too much predictable)
+      Value is (0 + (1.2 * V1) + (0.05 * V2) + V3)).
 
 value_offensive(Player, Value, Piece, X, Y) :-
     \+ cell(_, _, Player, Piece),
@@ -141,6 +141,7 @@ value_defensive(Player, Value, Piece, X, Y) :-
     count_attackers(Player, king, NKing),
     count_attackers(Player, queen, NQueen),
     change_database(X0, Y0, Player, Piece),
+    write(NKing),nl,
     add_defensive_values(NKing, NQueen, Value).
 
 add_defensive_values(4, _, Value) :-

@@ -11,9 +11,10 @@ count_attackers(Player, Piece, Number) :-
     Number is 0.
 
 count_surrounded(X, Y, Number) :-
-    count_surrounded_collumn(X, Y, N1),
-    count_surrounded_row(X, Y, N2),
-    Number is N1 + N2.
+    count_surrounded_collumn(Y, X, N1),
+    count_surrounded_row(Y, X, N2),
+    Number is N1 + N2,
+    write(X), write(','), write(Y), write(' = '), write(Number),nl.
 
 count_surrounded_row(R, C, N) :-
     virtual_vertical_limit,
