@@ -33,16 +33,19 @@ ai_action(Player, Level, [Piece, X, Y]) :-
       special_power_on_placement_ai(Piece, Player, Move)); true)).
 
 valid_moves(Player, PossibleMoves) :-
-    setof([Piece, X, Y],(piece(Piece, Player, _), between(0, 5, X),between(0, 5, Y), possible_play(Player, Piece, X, Y)), PossibleMoves).
+    findall([Piece, X, Y],(piece(Piece, Player, _), between(0, 5, X),between(0, 5, Y), possible_play(Player, Piece, X, Y)), PossibleMoves).
 
 valid_piece_moves(Player, Piece, PossibleMoves) :-
-    setof([X, Y],(between(0, 5, X),between(0, 5, Y), possible_play(Player, Piece, X, Y)), PossibleMoves).
+    setof([X, Y],(between(0, 5, X),between(0, 5, Y), possible_play(Player, Piece, X, Y)), PossibleMoves) ;
+    (append([], [], PossibleMoves), true).
 
 valid_special_play(pawn, Player, PossibleMoves) :-
-    setof([X, Y],(between(0, 5, X),between(0, 5, Y), possible_play(Player, pawn, X, Y)), PossibleMoves).
+    setof([X, Y],(between(0, 5, X),between(0, 5, Y), possible_play(Player, pawn, X, Y)), PossibleMoves);
+    (append([], [], PossibleMoves), true).
 
 valid_special_play(bishop, Player, PossibleMoves) :-
-    setof([X, Y],(cell(X, Y, TargetPlayer, Piece), possible_removable(Player, TargetPlayer, Piece, X, Y)), PossibleMoves).
+    setof([X, Y],(cell(X, Y, TargetPlayer, Piece), possible_removable(Player, TargetPlayer, Piece, X, Y)), PossibleMoves);
+    (append([], [], PossibleMoves), true).
 
 possible_play(Player, Piece, X, Y) :-
     check_placement(Player, Piece, X, Y);
