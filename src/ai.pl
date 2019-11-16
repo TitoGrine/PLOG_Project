@@ -10,7 +10,7 @@ ai_turn(Player, Level) :-
 choose_move(random, _, Moves, Move) :-
     random_member(Move, Moves).
 
-choose_move(high, Player, Moves, BestMove) :-
+choose_move(smart, Player, Moves, BestMove) :-
     calculate_moves_value(Player, Moves, ValuedMoves),
     max_value_list(ValuedMoves, BestValue),
     make_best_moves_list(ValuedMoves, BestValue, BestMoves),
@@ -19,7 +19,7 @@ choose_move(high, Player, Moves, BestMove) :-
 choose_special_move(random, _, _, Moves, Move) :-
     random_member(Move, Moves).
 
-choose_special_move(high, Player, Piece, Moves, BestMove) :-
+choose_special_move(smart, Player, Piece, Moves, BestMove) :-
     calculate_special_moves_value(Player, Piece, Moves, ValuedMoves),
     max_value_list(ValuedMoves, BestValue),
     make_best_special_moves_list(ValuedMoves, BestValue, BestMoves),
@@ -30,7 +30,7 @@ ai_action(Player, Level, [Piece, X, Y]) :-
     (place_ai(Player, Piece, X, Y), 
     ((valid_special_play(Piece, Player, Moves),
       choose_special_move(Level, Player, Piece, Moves, Move),!,
-      special_power_on_placement_ai(Piece, Player, Move)); true)).
+      special_ability_on_placement_ai(Piece, Player, Move)); true)).
 
 valid_moves(Player, PossibleMoves) :-
     findall([Piece, X, Y],(piece(Piece, Player, _), between(0, 5, X),between(0, 5, Y), possible_play(Player, Piece, X, Y)), PossibleMoves).
