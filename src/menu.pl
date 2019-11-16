@@ -64,6 +64,8 @@ instructions_menu :-
     ansi_format([fg(magenta)], '  That\'s it! When you are ready to go back just input "back." ', []),
     repeat, read(Input), Input == back, !.
 
+% ====================================================================================
+
 % All the options to start the game when playing Player vs AI
 execute_player_machine_menu_input(1) :-
     nl, start_game(player, ai, random), !.
