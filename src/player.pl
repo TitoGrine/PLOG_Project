@@ -13,7 +13,7 @@ player_turn(Player) :-
     readjust_board,             % If the pieces are in the outer ring of the board, it reajusts it by shifting appropriately
     check_queens_death.         % Checks if any of the queens are surrounded (if so they will be removed from the game)
 
-% Depending on the piece selected (if it's on the board or not), the action it takes can either be a move ora placement.
+% Depending on the piece selected (if it's on the board or not), the action it takes can either be a move or a placement.
 % It always returns true.
 player_action(Player, Piece) :-
     move(Player, Piece);

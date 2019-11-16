@@ -1,6 +1,6 @@
 :- ensure_loaded('game.pl').
 
-% Displays header for the main menu                                                   
+% Displays header for the main menu.                                                 
 main_menu_header :-
     ansi_format([fg(magenta)], '      `7MM"""YMM  ', []), ansi_format([fg(green)],  '  .g8"""bgd  ', []), ansi_format([fg(magenta)],  '`7MMF\'  `7MMF\'', []), ansi_format([fg(green)],  ' `7MM"""YMM ', []), ansi_format([fg(magenta)],  '    .g8"""bgd ', []), ansi_format([fg(green)],  '`7MMF\' `YMM\'', []), nl,   
     ansi_format([fg(magenta)], '        MM    `7  ', []), ansi_format([fg(green)],  '.dP\'     `M ', []), ansi_format([fg(magenta)],  '   MM      MM   ', []), ansi_format([fg(green)],  '  MM    `7  ', []), ansi_format([fg(magenta)],  ' .dP\'     `M ', []), ansi_format([fg(green)],  '  MM   .M\'', []), nl,   
@@ -11,7 +11,7 @@ main_menu_header :-
     ansi_format([fg(magenta)], '      .JMMmmmmMMM ', []), ansi_format([fg(green)],  '  `"bmmmd\'  ', []), ansi_format([fg(magenta)],  ' .JMML.  .JMML. ', []), ansi_format([fg(green)],  '.JMMmmmmMMM ', []), ansi_format([fg(magenta)],  '   `"bmmmd\'  ', []), ansi_format([fg(green)],  '.JMML.   MMb.', []), nl,nl,
     !.
 
-% Displays main menu options
+% Displays main menu options.
 main_menu_options :-
     ansi_format([fg(magenta)], '      Please choose one of the following options:           ', []), nl,
     ansi_format([fg(white)], '                                                               (\\=,   ', []), nl, 
@@ -27,7 +27,7 @@ main_menu_options :-
     
     !.
 
-% Displays options to select the AI the user wants to play against
+% Displays options to select the AI the user wants to play against.
 player_machine_menu_options :-
     ansi_format([fg(magenta)], '      Which AI do you want to play against:           ', []), nl, nl,
     ansi_format([fg(green)],   '           1 - Random AI                              ', []), nl, nl,
@@ -35,7 +35,7 @@ player_machine_menu_options :-
     ansi_format([fg(green)],   '           3 - Go Back                                ', []), nl, nl,
     !.
 
-% Displays options to select the AI's the user wants to see play against each other
+% Displays options to select the AI's the user wants to see play against each other.
 machine_machine_menu_options :-
     ansi_format([fg(magenta)], '      Which AI\'s do you wanna see play against each other:       ', []), nl, nl,
     ansi_format([fg(green)],   '           1 - Random AI vs Random AI                             ', []), nl, nl, 
@@ -44,7 +44,7 @@ machine_machine_menu_options :-
     ansi_format([fg(green)],   '           4 - Go Back                                            ', []), nl, nl,
     !.
 
-% Display some relevant instructions in order to play the game (doesn't have all the game mechanics in detail)
+% Display some relevant instructions in order to play the game (doesn't have all the game mechanics in detail).
 instructions_menu :-
     nl, nl,
     ansi_format([fg(magenta)], '                             =============================================', []), nl,
@@ -66,7 +66,7 @@ instructions_menu :-
 
 % ====================================================================================
 
-% All the options to start the game when playing Player vs AI
+% All the options to start the game when playing Player vs AI.
 execute_player_machine_menu_input(1) :-
     nl, start_game(player, ai, random), !.
 
@@ -77,7 +77,7 @@ execute_player_machine_menu_input(3) :- !.
 
 % ====================================================================================
 
-% All the options to start the game when playing AI vs AI
+% All the options to start the game when playing AI vs AI.
 execute_machine_machine_menu_input(1) :-
     nl, start_game(ai, ai, random, random), !.
 
@@ -91,7 +91,7 @@ execute_machine_machine_menu_input(4) :- !.
 
 % ====================================================================================
 
-% All the main menu inputs, it can either call other menus when playing with AI's, call Player vs Player, instructions or exit game
+% All the main menu inputs, it can either call other menus when playing with AI's, call Player vs Player, instructions or exit game.
 execute_menu_input(1) :-
     start_game(player, player), !.
 
@@ -116,7 +116,7 @@ execute_menu_input(5) :- !.
 
 % ====================================================================================
 
-% Predicate that starts the hole program
+% Predicate that starts the hole program.
 play:-
     repeat,
         nl,
