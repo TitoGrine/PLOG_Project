@@ -1,4 +1,4 @@
-:- ensure_loaded('default_board.pl').
+:- ensure_loaded('board.pl').
 :- ensure_loaded('utils.pl').
 
 opposite(black, white).

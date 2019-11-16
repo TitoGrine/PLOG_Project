@@ -104,7 +104,3 @@ prevent_cycles(ValuedMoves, BestValue, OptimalMoves, BestMoves) :-
       append(OptimalMoves, [], BestMoves));
      ((repeat, random_member([RandomValue | Rest], ValuedMoves), RandomValue < BestValue),!, % Ensures the random move isn't an optimal move
       append(OptimalMoves, [Rest], BestMoves))).
-
-% Compares the values between two moves
-greater([Value1|_], [Value2|_]) :-
-    Value1 >= Value2.
