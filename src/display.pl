@@ -2,7 +2,7 @@
 :- ensure_loaded('logic.pl').
 
 % Pieces internal representation.
-% These facts associate color to name and finally character.
+% These facts associate color and name to the corresponding character.
 piece(king, black, '♚').
 piece(king, white, '♔').
 piece(queen, black, '♛').
@@ -18,11 +18,11 @@ piece(pawn, white, '♙').
 
 % ====================================================================================
 % NOTE: All the display predicates make heavy use of the draw predicates in draw.pl.
-% This file handles the displaying at an high level. Only the draw.pl predicates actually writes things on the screen.
+% This file handles the displaying at an high level. Only the draw.pl predicates actually output to the screen.
 
 % Predicate called every turn to display the current board state.
 display_board :-
-    nl, draw_space, draw_title, nl,
+    nl, nl, draw_space, draw_title, nl,
     draw_space, draw_top_boundary,
     draw_space, draw_column_coordinates,
     \+display_board([6, 6], 0),             % Actual board display with pieces is made here.

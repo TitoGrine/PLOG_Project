@@ -1,9 +1,9 @@
 :- ensure_loaded('logic.pl').
 
-% This module makes all actual drawing in the console.
+% This module makes all actual drawing in the console, related to displaying the board.
 % This way drawing details are hidden from the view clauses.
 
-% Font used for numbers. Useful to draw coordinates on the screen.
+% Font used for numbers. Used to draw coordinates on the screen.
 number_font(0, '𝟘').
 number_font(1, '𝟙').
 number_font(2, '𝟚').
@@ -16,6 +16,7 @@ number_font(8, '𝟠').
 number_font(9, '𝟡').
 
 % ====================================================================================
+
 % High level rules used by display.
 % Draw predicates use green and magenta colors to make our game more appealing to the eye ;)
 
@@ -25,15 +26,15 @@ draw_title :-
 
 % Draws the upper limit of the board.
 draw_top_boundary :-
-    draw_top_corner_left,
+    draw_top_left_corner,
     \+draw_top(5, 0),
-    draw_top_corner_right, nl.
+    draw_top_right_corner, nl.
 
 % Draws the bottom limit of the board.
 draw_bottom_boundary :-
-    draw_bottom_corner_left,
+    draw_bottom_left_corner,
     \+draw_bottom(5, 0),
-    draw_bottom_corner_right, nl.
+    draw_bottom_right_corner, nl.
 
 % Draws the line with all the column coordinates.
 draw_column_coordinates :-
@@ -51,8 +52,7 @@ draw_column_coordinates :-
     ansi_format([fg(green)],'𝟝 ', []),
     ansi_format([bold, fg(magenta)],  '│' , []), nl.
 
-% Draws a separator.
-% A separator is the line which separates two consecutive rows.
+% Draws a separator. A separator is the line which separates two consecutive rows.
 draw_separator(Column) :-
     draw_left,
     \+draw_line(Column, 0),
@@ -79,7 +79,8 @@ draw_piece(Char, Color, Opposite) :-
     ansi_format([bold, fg(magenta)],'│', []).
 
 % ====================================================================================
-% Auxiliary predicates to make the code more readable.
+
+% Auxiliary predicates used to make the code more readable.
 
 % Draws a line with the below character.
 % Calls itself recursively until it reaches the desired length.
@@ -102,10 +103,10 @@ draw_bottom(Length, X) :-
 % The following predicates draw special parts of the border specifically.
 % Their names indicate which part they refer to.
 
-draw_top_corner_right :-
+draw_top_right_corner :-
     ansi_format([bold, fg(magenta)],'┬───┐', []).
 
-draw_top_corner_left :-
+draw_top_left_corner :-
     ansi_format([bold, fg(magenta)],'┌───', []).
 
 draw_right :-
@@ -114,12 +115,12 @@ draw_right :-
 draw_left :-
     ansi_format([bold, fg(magenta)],'├───┼', []).
 
-draw_bottom_corner_right :-
+draw_bottom_right_corner :-
     ansi_format([bold, fg(magenta)],'┴───┘', []).
 
-draw_bottom_corner_left :-
+draw_bottom_left_corner :-
     ansi_format([bold, hfg(magenta)],'└───', []).
 
-% Draws a constantly sized white space for identation.
+% Draws a constantly sized white space for indentation.
 draw_space :-
     write('            ').
