@@ -33,7 +33,8 @@ virtual_vertical_limit :-
 % Checks if the coordinates are to cancel an action
 cancel(-1, -1).
 
-%======================================
+% ====================================================================================
+
 % These predicates read coordinates from the standard input. They only differ in the message displayed
 read_coords_no_cancel(X, Y, Player, Piece, move) :-
     ansi_format([fg(green)],'Move ~s ~s to cell', [Player, Piece]),
@@ -59,7 +60,7 @@ read_player_piece(X, Y) :-
     arg(1, Input, X), arg(2, Input, Y),
     integer(X), integer(Y).
 
-%=====================================
+% ====================================================================================
 
 % Reads the name of a piece from the standard input
 choose_piece(Player, Piece) :-
