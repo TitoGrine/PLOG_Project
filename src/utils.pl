@@ -92,6 +92,8 @@ prevent_cycles(ValuedMoves, BestValue, OptimalMoves, BestMoves) :-
      ((repeat, random_member([RandomValue | Rest], ValuedMoves), RandomValue < BestValue),!, % Ensures the random move isn't an optimal move
       append(OptimalMoves, [Rest], BestMoves))).
 
+make_best_special_moves_list(ValuedMoves, BestValue, BestMoves) :-
+    findall(Info, (member([Value|Info], ValuedMoves), Value =:= BestValue), BestMoves), !.
 
 % Compares the values between two moves
 greater([Value1|_], [Value2|_]) :-

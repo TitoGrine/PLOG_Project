@@ -22,7 +22,7 @@ choose_special_move(random, _, _, Moves, Move) :-
 choose_special_move(high, Player, Piece, Moves, BestMove) :-
     calculate_special_moves_value(Player, Piece, Moves, ValuedMoves),
     max_value_list(ValuedMoves, BestValue),
-    make_best_moves_list(ValuedMoves, BestValue, BestMoves),
+    make_best_special_moves_list(ValuedMoves, BestValue, BestMoves),
     random_member(BestMove, BestMoves), !.
 
 ai_action(Player, Level, [Piece, X, Y]) :-
@@ -40,12 +40,11 @@ valid_piece_moves(Player, Piece, PossibleMoves) :-
     (append([], [], PossibleMoves), true).
 
 valid_special_play(pawn, Player, PossibleMoves) :-
-    setof([X, Y],(between(0, 5, X),between(0, 5, Y), possible_play(Player, pawn, X, Y)), PossibleMoves);
-    (append([], [], PossibleMoves), true).
+    cell(PX, PY, Player, pawn), append([PX, PY], [], PossibleMoves),
+    findall([X, Y],(between(0, 5, X),between(0, 5, Y), possible_play(Player, pawn, X, Y)), PossibleMoves).
 
 valid_special_play(bishop, Player, PossibleMoves) :-
-    setof([X, Y],(cell(X, Y, TargetPlayer, Piece), possible_removable(Player, TargetPlayer, Piece, X, Y)), PossibleMoves);
-    (append([], [], PossibleMoves), true).
+    findall([X, Y],(cell(X, Y, TargetPlayer, Piece), possible_removable(Player, TargetPlayer, Piece, X, Y)), PossibleMoves).
 
 possible_play(Player, Piece, X, Y) :-
     check_placement(Player, Piece, X, Y);
@@ -68,12 +67,11 @@ add_value(Player, [Piece, X, Y], [Value, Piece, X, Y]) :-
 
 value(Player, pawn, X, Y, Value) :-
     \+ cell(_, _, Player, pawn),
-    value_offensive(Player, V1, pawn, X, Y),
     value_next_move(Player, V2, pawn, X, Y),
     value_defensive(Player, V3, pawn, X, Y),
     ((V3 =:= -100, Value is V3);
      (V2 >= 1, V3 >= 6, Value is 120); %In this case, it is very likely that the ai can win the game with a special pawn move
-      Value is (0 + (1.2 * V1) + V3)). % Next_move : (0.1 * V2) (this was making the ai too much predictable)
+      Value is (0 + (0.1 * V2) + V3)).
 
 value(Player, Piece, X, Y, Value) :-
     value_offensive(Player, V1, Piece, X, Y),
