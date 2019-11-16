@@ -39,7 +39,7 @@ castling_move(Player, rook, X, Y, RookX, RookY) :-
     castling_done(Player).
 
 
-special_power_on_placement(pawn, Player) :-
+special_ability_on_placement(pawn, Player) :-
     cell(Xinit, Yinit, Player, pawn),
     display_board,
     !,
@@ -53,7 +53,7 @@ special_power_on_placement(pawn, Player) :-
     ((check_virtual_limits,
       check_connections); (change_database(Xinit, Yinit, Player, pawn), false)))).
 
-special_power_on_placement(bishop, Player) :-
+special_ability_on_placement(bishop, Player) :-
     only_kings_on_board(Player);
     display_board,
     (!,
@@ -63,18 +63,18 @@ special_power_on_placement(bishop, Player) :-
         delete_from_database(X, Y, TargetPlayer, Piece),
         (check_connections; (change_database(X, Y, TargetPlayer, Piece), false))).
  
-special_power_on_placement(_, _).
+special_ability_on_placement(_, _).
 
-special_power_on_placement_ai(pawn, Player, [Xdest, Ydest]) :-
+special_ability_on_placement_ai(pawn, Player, [Xdest, Ydest]) :-
     display_board,
     change_database(Xdest, Ydest, Player, pawn).
 
-special_power_on_placement_ai(bishop, Player, [X, Y]) :-
+special_ability_on_placement_ai(bishop, Player, [X, Y]) :-
     only_kings_on_board(Player);
     display_board,
     delete_from_database(X, Y, _, _).
  
-special_power_on_placement_ai(_, _).
+special_ability_on_placement_ai(_, _).
 
 possible_removable(Player, TargetPlayer, Piece, X ,Y) :-
     valid_removable_cell(X, Y, Player, TargetPlayer, Piece),
