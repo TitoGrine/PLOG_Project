@@ -81,8 +81,9 @@ max_value_list([Head|Rest], Best) :-
     max_value_list(Rest, Head, [Best| _]),!.
 
 make_best_moves_list(ValuedMoves, BestValue, BestMoves) :-
-    findall(Info, (member([Value|Info], ValuedMoves), Value =:= BestValue), OptimalMoves),!,
-    prevent_cycles(ValuedMoves, BestValue, OptimalMoves, BestMoves).
+    findall(Info, (member([Value|Info], ValuedMoves), Value =:= BestValue), BestMoves).
+    %,!,
+    %prevent_cycles(ValuedMoves, BestValue, OptimalMoves, BestMoves).
 
 % Prevents the game entering an infinite cycle, when playing machine vs machine, and the best plays are limited (1-2)
 prevent_cycles(ValuedMoves, BestValue, OptimalMoves, BestMoves) :-

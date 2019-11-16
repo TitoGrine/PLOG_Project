@@ -3,16 +3,16 @@
 % This module makes all actual drawing in the console.
 % This way drawing details are hidden from the view clauses
 
-number_font(0, 𝟘).
-number_font(1, 𝟙).
-number_font(2, 𝟚).
-number_font(3, 𝟛).
-number_font(4, 𝟜).
-number_font(5, 𝟝).
-number_font(6, 𝟞).
-number_font(7, 𝟟).
-number_font(8, 𝟠).
-number_font(9, 𝟡).
+number_font(0, '𝟘').
+number_font(1, '𝟙').
+number_font(2, '𝟚').
+number_font(3, '𝟛').
+number_font(4, '𝟜').
+number_font(5, '𝟝').
+number_font(6, '𝟞').
+number_font(7, '𝟟').
+number_font(8, '𝟠').
+number_font(9, '𝟡').
 
 
 % High level rules used by display

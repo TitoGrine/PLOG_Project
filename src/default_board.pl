@@ -39,4 +39,9 @@ castling_available(white).
 castling_available(black).
 
 cell(3, 2, white, king).
-cell(2, 2, black, king).
+cell(3, 3, black, king).
+cell(4, 1, white, knight).
+cell(3, 1, black, bishop).
+cell(2, 3, white, rook).
+cell(1, 4, black, pawn).
+cell(2, 2, black, rook).

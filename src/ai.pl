@@ -14,7 +14,7 @@ choose_move(high, Player, Moves, BestMove) :-
     calculate_moves_value(Player, Moves, ValuedMoves),
     max_value_list(ValuedMoves, BestValue),
     make_best_moves_list(ValuedMoves, BestValue, BestMoves),
-    random_member(BestMove, BestMoves).
+    random_member(BestMove, BestMoves), !.
 
 choose_special_move(random, _, _, Moves, Move) :-
     random_member(Move, Moves).
@@ -23,7 +23,7 @@ choose_special_move(high, Player, Piece, Moves, BestMove) :-
     calculate_special_moves_value(Player, Piece, Moves, ValuedMoves),
     max_value_list(ValuedMoves, BestValue),
     make_best_moves_list(ValuedMoves, BestValue, BestMoves),
-    random_member(BestMove, BestMoves).
+    random_member(BestMove, BestMoves), !.
 
 ai_action(Player, Level, [Piece, X, Y]) :-
     move_ai(Player, Piece, X, Y);
@@ -33,16 +33,16 @@ ai_action(Player, Level, [Piece, X, Y]) :-
       special_power_on_placement_ai(Piece, Player, Move)); true)).
 
 valid_moves(Player, PossibleMoves) :-
-    findall([Piece, X, Y],(piece(Piece, Player, _), between(0, 5, X),between(0, 5, Y), possible_play(Player, Piece, X, Y)), PossibleMoves).
+    setof([Piece, X, Y],(piece(Piece, Player, _), between(0, 5, X),between(0, 5, Y), possible_play(Player, Piece, X, Y)), PossibleMoves).
 
 valid_piece_moves(Player, Piece, PossibleMoves) :-
-    findall([X, Y],(between(0, 5, X),between(0, 5, Y), possible_play(Player, Piece, X, Y)), PossibleMoves).
+    setof([X, Y],(between(0, 5, X),between(0, 5, Y), possible_play(Player, Piece, X, Y)), PossibleMoves).
 
 valid_special_play(pawn, Player, PossibleMoves) :-
-    findall([X, Y],(between(0, 5, X),between(0, 5, Y), possible_play(Player, pawn, X, Y)), PossibleMoves).
+    setof([X, Y],(between(0, 5, X),between(0, 5, Y), possible_play(Player, pawn, X, Y)), PossibleMoves).
 
 valid_special_play(bishop, Player, PossibleMoves) :-
-    findall([X, Y],(cell(X, Y, TargetPlayer, Piece), possible_removable(Player, TargetPlayer, Piece, X, Y)), PossibleMoves).
+    setof([X, Y],(cell(X, Y, TargetPlayer, Piece), possible_removable(Player, TargetPlayer, Piece, X, Y)), PossibleMoves).
 
 possible_play(Player, Piece, X, Y) :-
     check_placement(Player, Piece, X, Y);
@@ -141,7 +141,6 @@ value_defensive(Player, Value, Piece, X, Y) :-
     count_attackers(Player, king, NKing),
     count_attackers(Player, queen, NQueen),
     change_database(X0, Y0, Player, Piece),
-    write(NKing),nl,
     add_defensive_values(NKing, NQueen, Value).
 
 add_defensive_values(4, _, Value) :-
@@ -162,11 +161,12 @@ value_special(Player, pawn, X, Y, Value) :-
 value_special(Player, bishop, X, Y, Value) :-
     opposite(Player, Enemy),
     cell(X, Y, PieceColor, Piece),
-    ((Player == PieceColor, value_defensive_remove(Enemy, V1, X, Y));  % If it is the players king/queen then the removal is strongly encouraged.
-                            value_offensive_remove(Player, V1, X, Y)), % Otherwise it is strongly disencouraged.
-    value_piece_remove(Player, PieceColor, Piece, V2),
-    count_attackers(PieceColor, king, NKing),
-    Value is 0 + NKing * V1 + V2. % The higher the number of pieces around a king, the more important is the removal of a piece around it.
+    value_offensive_remove(Enemy, V1, X, Y),  % If it is the players king/queen then the removal is strongly encouraged.
+    value_defensive_remove(Player, V2, X, Y), % Otherwise it is strongly disencouraged.
+    value_piece_remove(Player, PieceColor, Piece, V3),
+    count_attackers(Player, king, NFriendlyKing),
+    count_attackers(Enemy, king, NEnemyKing),
+    Value is 0 + NFriendlyKing * V1 + NEnemyKing * V2 + V3. % The higher the number of pieces around a king, the more important is the removal of a piece around it.
 
 % The following predicates atribute a value to each piece removal
 % If the piece to be removed is a players piece, then it is not encouraged to remove it
@@ -174,7 +174,7 @@ value_piece_remove(Player, Player, queen, -2).
 value_piece_remove(Player, Player, rook, -1.5).
 value_piece_remove(Player, Player, knight, -1).
 value_piece_remove(Player, Player, pawn, -0.5).
-% When the piece is an enemy piece, then the ai is encouraged to do remove it
+% When the piece is an enemy piece, then the ai is encouraged to remove it
 value_piece_remove(_, _, bishop, 0).
 value_piece_remove(_, _, pawn, 0.5).
 value_piece_remove(_, _, knight, 1).
@@ -182,7 +182,7 @@ value_piece_remove(_, _, rook, 1.5).
 value_piece_remove(_, _, queen, 2).
 
 value_defensive_remove(Player, Value, X, Y) :-
-    side_piece(X, Y, Player, king),!, side_piece(X, Y, Player, queen), Value is 3.
+    side_piece(X, Y, Player, king), side_piece(X, Y, Player, queen), Value is 3.
 
 value_defensive_remove(Player, Value, X, Y) :-
     side_piece(X, Y, Player, king), Value is 2.
@@ -193,7 +193,7 @@ value_defensive_remove(Player, Value, X, Y) :-
 value_defensive_remove(_, 0, _, _).
 
 value_offensive_remove(Enemy, Value, X, Y) :-
-    side_piece(X, Y, Enemy, king),!, side_piece(X, Y, Enemy, queen), Value is -3.
+    side_piece(X, Y, Enemy, king), side_piece(X, Y, Enemy, queen), Value is -3.
 
 value_offensive_remove(Enemy, Value, X, Y) :-
     side_piece(X, Y, Enemy, king), Value is -2.
