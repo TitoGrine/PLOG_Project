@@ -207,10 +207,10 @@ valid_move(queen, Xinit, Yinit, Xdest, Ydest, Player) :-
     (Xinit = Xdest; Yinit = Ydest;
     (Xdest \= Xinit, Inclination is (Ydest - Yinit) / (Xdest - Xinit),
     (Inclination = -1; Inclination = 1))),!,
-    diagonal_cross_enemy(Yinit, Xinit, Ydest, Xdest, Player),!, % The same "over enemy" verifications are made for the queen
+    diagonal_cross_enemy(Yinit, Xinit, Ydest, Xdest, Player),!, % The same "over enemy" verifications are made for the queen.
     straight_cross_enemy(Yinit, Xinit, Ydest, Xdest, Player).
 
-% Knight moves in 'L' shape. This piece can go over enemy pieces
+% Knight moves in 'L' shape. This piece can go over enemy pieces.
 valid_move(knight, Xinit, Yinit, Xdest, Ydest, _) :-
     !,
     NextY is Yinit + 1, PrevY is Yinit - 1,
