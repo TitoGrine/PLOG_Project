@@ -40,13 +40,13 @@ check_castling(Player, rook, X, Y) :-
     castling_available(Player),
     cell(X, Y, Player, king).
 
-% Executes a castling move if it is valid
+% Executes a castling move if it is valid.
 castling_move(Player, rook, X, Y, RookX, RookY) :-
-    castling_available(Player),!,        % Checks if the player has not used castling already
+    castling_available(Player),!,        % Checks if the player has not used castling already.
     cell(X, Y, Player, king),
-    change_database(RookX, RookY, Player, king), % Swapping king and rook's positions
+    change_database(RookX, RookY, Player, king), % Swapping king and rook's positions.
     change_database(X, Y, Player, rook),
-    castling_done(Player).              % From now on the player can no longer do a castling again
+    castling_done(Player).              % From now on the player can no longer do a castling again.
 
 % ====================================================================================
 
@@ -59,7 +59,7 @@ special_ability_on_placement(pawn, Player) :-
     repeat,
     change_database(Xinit, Yinit, Player, pawn),
     read_coords_no_cancel(Xdest, Ydest, Player, pawn, move),
-    ((Xinit == Xdest, Yinit == Ydest); %This condition allows the user to choose not to move the pawn immediatly
+    ((Xinit == Xdest, Yinit == Ydest); % This condition allows the user to choose not to move the pawn immediatly.
     (valid_cell(Ydest, Xdest),
     valid_move(pawn, Xinit, Yinit, Xdest, Ydest, Player),
     change_database(Xdest, Ydest, Player, pawn),
@@ -123,14 +123,14 @@ only_kings_on_board(Player) :-
 
 % Checks if a cell is a valid target for movement.
 valid_cell(R, C) :-
-    within_limits(R, C),!,              % Ensures the position is within the board limits
-    \+cell(C, R, _, _).                 % Checks if there is already a piece in that cell
+    within_limits(R, C),!,              % Ensures the position is within the board limits.
+    \+cell(C, R, _, _).                 % Checks if there is already a piece in that cell.
 
 % Checks if all the pieces are connected to each other using a flood fill algorithm.
 % All the pieces that are visited are marked as such and if there is any left unvisited then there is a disconnection on the board.
 % Before exiting, this predicate marks all pieces unvisited again.
 check_connections :-
-    cell(C, R, _, _), % The flood fill is launched by the first cell registered in the database
+    cell(C, R, _, _), % The flood fill is launched by the first cell registered in the database.
     connected_board([[R, C]]),!,
     ((all_visited, clean_visited) ; (\+ clean_visited)).
 
@@ -139,8 +139,8 @@ connected_board([]).
 connected_board([[] | Others]) :-
     connected_board(Others).
 connected_board([[R, C] | Others]) :-
-    ((check_visited(R, C), Next = Others) ;  % If the piece has already been visited, proceeds
-    (add_visited(R, C),                      % Otherwise marks it as visited and checks for nearby pieces
+    ((check_visited(R, C), Next = Others) ;  % If the piece has already been visited, proceeds.
+    (add_visited(R, C),                      % Otherwise marks it as visited and checks for nearby pieces.
      PR is R - 1, NR is R + 1,
      PC is C - 1, NC is C + 1,
      !,
@@ -152,8 +152,8 @@ connected_board([[R, C] | Others]) :-
       ((cell(PC, NR, _, _), Cell6 = [NR, PC]) ; Cell6 = []),
       ((cell( C, NR, _, _), Cell7 = [NR,  C]) ; Cell7 = []),
       ((cell(NC, NR, _, _), Cell8 = [NR, NC]) ; Cell8 = [])),
-     append(Others, [Cell1, Cell2, Cell3, Cell4, Cell5, Cell6, Cell7, Cell8], Next))), % All pieces nearby are added to the buffer
-    connected_board(Next). % Tail recursion. Only ends when the buffer is empty
+     append(Others, [Cell1, Cell2, Cell3, Cell4, Cell5, Cell6, Cell7, Cell8], Next))), % All pieces nearby are added to the buffer.
+    connected_board(Next). % Tail recursion. Only ends when the buffer is empty.
     
 % Checks if all pieces have been visited (makes use of backtracking).
 all_visited :-
@@ -167,6 +167,7 @@ check_virtual_limits :-
        \+ within_virtual_limits(R, C))).
 
 % ====================================================================================
+
 % The below predicates represent the piece's own movement rules (just like chess).
 
 % Pawn moves to side adjacent cells.
@@ -207,10 +208,10 @@ valid_move(queen, Xinit, Yinit, Xdest, Ydest, Player) :-
     (Xinit = Xdest; Yinit = Ydest;
     (Xdest \= Xinit, Inclination is (Ydest - Yinit) / (Xdest - Xinit),
     (Inclination = -1; Inclination = 1))),!,
-    diagonal_cross_enemy(Yinit, Xinit, Ydest, Xdest, Player),!, % The same "over enemy" verifications are made for the queen
+    diagonal_cross_enemy(Yinit, Xinit, Ydest, Xdest, Player),!, % The same "over enemy" verifications are made for the queen.
     straight_cross_enemy(Yinit, Xinit, Ydest, Xdest, Player).
 
-% Knight moves in 'L' shape. This piece can go over enemy pieces
+% Knight moves in 'L' shape. This piece can go over enemy pieces.
 valid_move(knight, Xinit, Yinit, Xdest, Ydest, _) :-
     !,
     NextY is Yinit + 1, PrevY is Yinit - 1,
