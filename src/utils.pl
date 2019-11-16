@@ -87,6 +87,10 @@ greater([Value1|_], [Value2|_]) :-
 
 %=====================================
 
+% Makes a list with only the optimal moves (with the highest value)
+make_best_special_moves_list(ValuedMoves, BestValue, BestMoves) :-
+    findall(Info, (member([Value|Info], ValuedMoves), Value =:= BestValue), BestMoves), !.
+
 % Makes a list with only the optimal moves (with the highest value), except if there is only one, in which
 % case it adds a random move, in order to prevent infinite cycles when Ai vs Ai are playing
 make_best_moves_list(ValuedMoves, BestValue, BestMoves) :-
@@ -100,9 +104,6 @@ prevent_cycles(ValuedMoves, BestValue, OptimalMoves, BestMoves) :-
       append(OptimalMoves, [], BestMoves));
      ((repeat, random_member([RandomValue | Rest], ValuedMoves), RandomValue < BestValue),!, % Ensures the random move isn't an optimal move
       append(OptimalMoves, [Rest], BestMoves))).
-
-make_best_special_moves_list(ValuedMoves, BestValue, BestMoves) :-
-    findall(Info, (member([Value|Info], ValuedMoves), Value =:= BestValue), BestMoves), !.
 
 % Compares the values between two moves
 greater([Value1|_], [Value2|_]) :-
