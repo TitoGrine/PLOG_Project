@@ -16,7 +16,7 @@
  - [x] Implement game mode with "smart" AI (at least one level of decision)
  - [x] Remove all warnings as possible
  - [ ] Make function for input checking (string and coordinates)
- - [ ] Comment code
+ - [x] Comment code
  - [ ] Organize functions
 
 #### Testing:
