@@ -2,16 +2,19 @@
 :- ensure_loaded('ai.pl').
 
 start_game(player, player) :-
+    nl,
     display_board,
     play_player_player(white),
     reset_board.
 
 start_game(player, ai, Difficulty) :-
+    nl,
     display_board,
     play_player_AI(player, Difficulty),
     reset_board.
 
 start_game(ai, ai, DifficultyWhite, DifficultyBlack) :-
+    nl,
     display_board,
     play_AI_AI(white, DifficultyWhite, DifficultyBlack),
     reset_board.

@@ -10,7 +10,7 @@ ai_turn(Player, Level) :-
 choose_move(random, _, Moves, Move) :-
     random_member(Move, Moves).
 
-choose_move(high, Player, Moves, BestMove) :-
+choose_move(smart, Player, Moves, BestMove) :-
     calculate_moves_value(Player, Moves, ValuedMoves),
     max_value_list(ValuedMoves, BestValue),
     make_best_moves_list(ValuedMoves, BestValue, BestMoves),
@@ -19,7 +19,7 @@ choose_move(high, Player, Moves, BestMove) :-
 choose_special_move(random, _, _, Moves, Move) :-
     random_member(Move, Moves).
 
-choose_special_move(high, Player, Piece, Moves, BestMove) :-
+choose_special_move(smart, Player, Piece, Moves, BestMove) :-
     calculate_special_moves_value(Player, Piece, Moves, ValuedMoves),
     max_value_list(ValuedMoves, BestValue),
     make_best_moves_list(ValuedMoves, BestValue, BestMoves),
@@ -141,7 +141,6 @@ value_defensive(Player, Value, Piece, X, Y) :-
     count_attackers(Player, king, NKing),
     count_attackers(Player, queen, NQueen),
     change_database(X0, Y0, Player, Piece),
-    write(NKing),nl,
     add_defensive_values(NKing, NQueen, Value).
 
 add_defensive_values(4, _, Value) :-
