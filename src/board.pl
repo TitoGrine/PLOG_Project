@@ -23,6 +23,10 @@ clean_visited :-
 
 % The following predicates are responsable for manipulating the "database", that is the current conditions of the board state
 
+% Stops the player with the given Color pieces, from using the rook's castling move again in that game
+castling_done(Color) :-
+    retractall(castling_available(Color)).
+
 % Adds to the cell (X, Y) the Piece of the given Color.
 add_to_database(X, Y, Color, Piece) :-
     assertz(cell(X, Y, Color, Piece)).
@@ -42,9 +46,11 @@ change_database(X, Y, Color, Piece) :-
     retractall(cell(_, _, Color, Piece)),!,
     assertz(cell(X, Y, Color, Piece)).
 
-% Stops the player with the given Color pieces, from using the rook's castling move again in that game
-castling_done(Color) :-
-    retractall(castling_available(Color)).
+% Resets the board back to its initial state.
+reset_board :-
+    retractall(cell(_,_,_,_)),
+    asserta(cell(2, 2, black, king)),
+    assertz(cell(3, 2, white, king)).
 
 % ====================================================================================
 

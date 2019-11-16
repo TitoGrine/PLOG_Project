@@ -78,9 +78,10 @@ check_queen_death(Player) :-
     kill_from_database(QC, QR, Player, queen). % This line effectively removes the queen from the game once and for all.
 
 % ====================================================================================
+
 % The following predicates do basically the same verifications as the above 'count_surrounded' predicates.
-% However, this ondes do not count and can return false.
-% Because of this, they have very distinct use cases (the counters work to value plays for the AI, the checkers are used to verify a PvP game).
+% However, these ones do not count and can return false.
+% Because of this, they have very distinct use cases (the counters work to value plays for the AI, the checkers are used to verify a Player vs Player game).
 check_surrounded(R, C) :-
     (check_surrounded_collumn(R, C),
      check_surrounded_row(R, C)).
@@ -169,12 +170,6 @@ diagonal_cross_enemy(Rcurr, Ccurr, Rdest, Cdest, R_delta, C_delta, Enemy) :-
     ((Rnext =:= Rdest ; Cnext =:= Cdest); diagonal_cross_enemy(Rnext, Cnext, Rdest, Cdest, R_delta, C_delta, Enemy)).
 
 % ====================================================================================
-
-% Resets the board back to its initial state.
-reset_board :-
-    retractall(cell(_,_,_,_)),
-    asserta(cell(2, 2, black, king)),
-    assertz(cell(3, 2, white, king)).
 
 % Detects when a piece is out of the virtual 4x4 board and shifts all pieces accordingly.
 readjust_board :-
