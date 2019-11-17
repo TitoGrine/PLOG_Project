@@ -100,7 +100,7 @@ make_best_moves_list(ValuedMoves, BestValue, BestMoves) :-
 % Prevents the game entering an infinite cycle, when playing machine vs machine, and there is only one optimal move
 prevent_cycles(ValuedMoves, BestValue, OptimalMoves, BestMoves) :-
     length(OptimalMoves, Length), length(ValuedMoves, TotalLength),!,
-    ((((\+ only_king_moves(OptimalMoves, Length)) ; BestValue >= 100 ; TotalLength =:= Length),
+    (((\+ only_king_moves(OptimalMoves, Length) ; BestValue >= 100 ; TotalLength =:= Length),
       append(OptimalMoves, [], BestMoves));
      ((repeat, random_member([RandomValue | Rest], ValuedMoves), RandomValue < BestValue),!, % Ensures the random move isn't an optimal move
       append(OptimalMoves, [Rest], BestMoves))).
