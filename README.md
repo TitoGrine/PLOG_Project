@@ -15,16 +15,14 @@
  - [X] Implement game mode with random AI
  - [x] Implement game mode with "smart" AI (at least one level of decision)
  - [x] Remove all warnings as possible
- - [ ] Make function for input checking (string and coordinates)
  - [x] Comment code
- - [ ] Organize functions
 
 #### Testing:
- - [ ] Placement on board
- - [ ] Piece movements
- - [ ] Virtual limits
- - [ ] Game edge cases
- - [ ] Just try to find bugs x)
+ - [X] Placement on board
+ - [X] Piece movements
+ - [X] Virtual limits
+ - [X] Game edge cases
+ - [X] Just try to find bugs x)
 
 #### Bugs:
  - [X] As long as there is no piece alone the move will be valid; when it creates a disconnection between 2 groups of pieces it must be invalid.
