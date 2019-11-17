@@ -1,11 +1,11 @@
 :- ensure_loaded('placement.pl').
 
-% It calculates the valid moves for the AI, and, depending on the Difficulty choosen, decides what
+% It calculates the valid moves for the AI, and, depending on the Level choosen, decides what
 % move to make and takes action.
-ai_turn(Player, Difficulty) :-
+ai_turn(Player, Level) :-
     valid_moves(Player, Moves),
-    choose_move(Difficulty, Player, Moves, Move),
-    ai_action(Player, Difficulty, Move),
+    choose_move(Level, Player, Moves, Move),
+    ai_action(Player, Level, Move),
     readjust_board,             % If the pieces are in the outer ring of the board, it reajusts it by shifting appropriately
     check_queens_death.         % Checks if any of the queens are surrounded (if so they will be removed from the game)
 
@@ -39,11 +39,11 @@ choose_special_move(smart, Player, Piece, Moves, BestMove) :-
 
 % Depending on the piece selected (if it's on the board or not), the action it takes can either be a move or a placement.
 % It always returns true.
-ai_action(Player, Difficulty, [Piece, X, Y]) :-
+ai_action(Player, Level, [Piece, X, Y]) :-
     move_ai(Player, Piece, X, Y);
     (place_ai(Player, Piece, X, Y), 
     ((valid_special_play(Piece, Player, Moves),                      % If its a placement and the piece has a special ability, it will get a list of possible moves.
-      choose_special_move(Difficulty, Player, Piece, Moves, Move),!, % Chooses a move from the list, criteria depends on the Difficulty of the AI.
+      choose_special_move(Level, Player, Piece, Moves, Move),!, % Chooses a move from the list, criteria depends on the Level of the AI.
       special_ability_on_placement_ai(Piece, Player, Move)); true)). % Executes the special move.
 
 % ====================================================================================

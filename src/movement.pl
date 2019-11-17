@@ -105,7 +105,7 @@ special_ability_on_placement_ai(_, _).
 possible_removable(Player, TargetPlayer, Piece, X ,Y) :-
     valid_removable_cell(X, Y, Player, TargetPlayer, Piece),
     delete_from_database(X, Y, TargetPlayer, Piece),!,
-    ((check_connections, change_database(X, Y, TargetPlayer, Piece)) ; \+change_database(X, Y, TargetPlayer, Piece)),!.
+    ((check_connections, change_database(X, Y, TargetPlayer, Piece)) ; \+ change_database(X, Y, TargetPlayer, Piece)),!.
 
 % Checks if the given coordinates do not correspond to a king or the bishop who has trigerred its special ability.
 valid_removable_cell(X, Y, Player, TargetPlayer, Piece) :-

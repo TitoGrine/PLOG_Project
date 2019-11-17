@@ -69,8 +69,8 @@ game_over(Winner) :-
     cell(BKC, BKR, black, king),
     !,
     ((check_surrounded(WKR, WKC), check_surrounded(BKR, BKC),
-     ansi_format([fg(yellow)], 'It\'s a draw!!', []), Winner = black_white), nl;
+     ansi_format([fg(yellow)], ' It\'s a draw!!', []), Winner = black_white), nl;
     (check_surrounded(WKR, WKC),
-     ansi_format([fg(yellow)], 'The black player has won!!', []), Winner = black), nl;
+     ansi_format([fg(yellow)], ' The black player has won!!', []), Winner = black), nl;
     (check_surrounded(BKR, BKC),
-     ansi_format([fg(yellow)], 'The white player has won!!', []), Winner = white), nl).
+     ansi_format([fg(yellow)], ' The white player has won!!', []), Winner = white), nl).
