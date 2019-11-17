@@ -59,8 +59,9 @@ valid_piece_moves(Player, Piece, PossibleMoves) :-
 
 % Finds all possible moves for the special ability of the pawn belonging ot the Player, when placed. Creates a list of type [[pawn, X0, X0], ..., [pawn, XN, YN]].
 valid_special_play(pawn, Player, PossibleMoves) :-
-    cell(PX, PY, Player, pawn), append([PX, PY], [], PossibleMoves),
-    findall([X, Y],(between(0, 5, X),between(0, 5, Y), possible_play(Player, pawn, X, Y)), PossibleMoves).
+    cell(PX, PY, Player, pawn), append([[PX, PY]], [], Move1),
+    valid_piece_moves(Player, pawn, Moves2),
+    append(Move1, Moves2, PossibleMoves).
 
 % Finds all possible pieces that the bishop of Player can remove with its special ability, when placed. Creates a list of type [[X0, X0], ..., [XN, YN]].
 valid_special_play(bishop, Player, PossibleMoves) :-
