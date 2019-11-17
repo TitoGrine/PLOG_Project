@@ -98,7 +98,7 @@ special_ability_on_placement_ai(bishop, Player, [X, Y]) :-
     delete_from_database(X, Y, _, _).
 
 % This predicate always returns true as does its player counterpart.
-special_ability_on_placement_ai(_, _).
+special_ability_on_placement_ai(_, _, _).
 
 % ====================================================================================
 
