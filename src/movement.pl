@@ -28,11 +28,13 @@ move_ai(Player, Piece, Xdest, Ydest) :-
 % Checks if a movement is within the rules. Used to generate AI movements.
 check_movement(Player, Piece, Xdest, Ydest):-
     cell(Xinit, Yinit, Player, Piece),!,
-    (check_castling(Player, Piece, Xdest, Ydest);
-    (valid_cell(Ydest, Xdest),
-    valid_move(Piece, Xinit, Yinit, Xdest, Ydest, Player),
-    change_database(Xdest, Ydest, Player, Piece),!,
-    ((check_virtual_limits, check_connections, change_database(Xinit, Yinit, Player, Piece)); \+ change_database(Xinit, Yinit, Player, Piece)))),!.
+    (check_castling(Player, Piece, Xdest, Ydest);           % Checks if the movement is a valid castling move.
+    (valid_cell(Ydest, Xdest),                              % Ensures the target cell is within limits and has no piece already.
+    valid_move(Piece, Xinit, Yinit, Xdest, Ydest, Player),  % Checks if the movement is valid for the respective piece.
+    change_database(Xdest, Ydest, Player, Piece),!,         % Temporarily moves the piece to the desired cell to do further verifications.
+    ((check_virtual_limits, check_connections,              % Ensures the movement does not disconnect all the pieces and that it does not break the virtual limits.
+    change_database(Xinit, Yinit, Player, Piece));          % The piece must be placed on its original cell because this predicate does not move a piece.
+    \+ change_database(Xinit, Yinit, Player, Piece)))),!.
 
 % Checks if a move is a valid castling move.
 % This forces the castling to be available to the player.
