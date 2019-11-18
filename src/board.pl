@@ -1,5 +1,5 @@
 :- dynamic(cell/4).
-:- dynamic(dead/3).
+:- dynamic(dead/2).
 :- dynamic(castling_available/1).
 :- dynamic(visited/2).
 
@@ -38,8 +38,8 @@ delete_from_database(X, Y, Color, Piece) :-
 % Removes from the cell (X, Y) the queen of the given Color. It makes it so the queen is no longer playable in that game.
 kill_from_database(X, Y, Color, queen) :-
     retractall(cell(X, Y, Color, queen)),!,
-    retractall(dead(Color, queen, _)),!,
-    asserta(dead(Color, queen, true)).   
+    retractall(dead(Color, queen)),!,
+    asserta(dead(Color, queen)).   
 
 % The Piece of the given Color, is removed from its current position and placed in the cell (X, Y).
 change_database(X, Y, Color, Piece) :-
@@ -56,8 +56,8 @@ reset_board :-
 
 % Starting conditions of the board.
 
-dead(white, queen, false).
-dead(black, queen, false).
+% dead(white, queen, false).
+% dead(black, queen, false).
 
 castling_available(white).
 castling_available(black).

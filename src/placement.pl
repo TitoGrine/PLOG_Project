@@ -1,10 +1,11 @@
 :- ensure_loaded('logic.pl').
+:- ensure_loaded('board.pl').
 
 % Reads the user input coordinates until it finds a valid position to place the queen, returning true,
 % if the queen is dead or the user cancels the piece choice, it returns false.
 place(Player, queen) :-
     \+ cell(_, _, Player, queen),!,
-    dead(Player, queen, false),         % Check if the players queen has been killed before, in which case the queen can't be replaced on the board.
+    \+ dead(Player, queen),         % Check if the players queen has been killed before, in which case the queen can't be replaced on the board.
     repeat,
     read_coords(X, Y, Player, queen, place),
     (cancel(X, Y);
@@ -34,7 +35,7 @@ place_ai(Player, Piece, X, Y) :-
 % Checks if the Players queen can be place in (X, Y), namely if it hasn't been killed before and the cell is valid.
 check_placement(Player, queen, X, Y) :-
     \+ cell(_, _, Player, queen),!,
-    dead(Player, queen, false),!,
+    dead(Player, queen),!,
     valid_cell(Y, X, Player).
 
 % Checks if the Players Piece can be place in (X, Y), namely if the cell is valid.
