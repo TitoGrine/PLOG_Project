@@ -35,7 +35,7 @@ place_ai(Player, Piece, X, Y) :-
 % Checks if the Players queen can be place in (X, Y), namely if it hasn't been killed before and the cell is valid.
 check_placement(Player, queen, X, Y) :-
     \+ cell(_, _, Player, queen),!,
-    dead(Player, queen),!,
+    \+ dead(Player, queen),!,
     valid_cell(Y, X, Player).
 
 % Checks if the Players Piece can be place in (X, Y), namely if the cell is valid.
