@@ -49,6 +49,10 @@ change_database(X, Y, Color, Piece) :-
 % Resets the board back to its initial state.
 reset_board :-
     retractall(cell(_,_,_,_)),
+    retractall(dead(_, _)),
+    retractall(castling_available(_)),
+    asserta(castling_available(black)),
+    assertz(castling_available(white)),
     asserta(cell(2, 2, black, king)),
     assertz(cell(3, 2, white, king)).
 
