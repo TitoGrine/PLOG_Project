@@ -16,6 +16,13 @@ generate_empty_board(Size, Board) :-
     length(Board, Size),
     maplist(row_list(Size), Board).
 
+flatten_board([], FlatBoard, FlatBoard).
+flatten_board([Row | RestBoard], AuxBoard, FlatBoard) :-
+    append(AuxBoard, Row, NewAuxBoard),
+    flatten_board(RestBoard, NewAuxBoard, FlatBoard).
+flatten_board(Board, FlatBoard) :-
+    flatten_board(Board, [], FlatBoard).
+
 get_horizontal_adjacent_numbers(Board, Size, R, 0, [Adjacent]) :-
     R >= 0, R < Size, 
     nth0(R, Board, Row),
@@ -136,7 +143,8 @@ solve_puzzle(Board) :-
     length(Board, Size),
     maplist(domain_row(1, 3), Board),
     valid_board(Board, Size),
-    maplist(labeling([]), Board),
+    flatten_board(Board, FlatBoard),
+    labeling([], FlatBoard),
     display_solution(Board, Size),
     
     statistics(walltime, [End,_]),
