@@ -2,6 +2,7 @@
 :- include('puzzleDatabase.pl').
 :- use_module(library(clpfd)).
 :- use_module(library(lists)).
+:- use_module(library(between)).
 :- use_module(library(system)).
 
 exactly(_, [], 0).
@@ -15,13 +16,6 @@ row_list(Size, Row) :-
 generate_empty_board(Size, Board) :-
     length(Board, Size),
     maplist(row_list(Size), Board).
-
-flatten_board([], FlatBoard, FlatBoard).
-flatten_board([Row | RestBoard], AuxBoard, FlatBoard) :-
-    append(AuxBoard, Row, NewAuxBoard),
-    flatten_board(RestBoard, NewAuxBoard, FlatBoard).
-flatten_board(Board, FlatBoard) :-
-    flatten_board(Board, [], FlatBoard).
 
 get_horizontal_adjacent_numbers(Board, Size, R, 0, [Adjacent]) :-
     R >= 0, R < Size, 
@@ -64,9 +58,49 @@ get_vertical_adjacent_numbers(Board, Size, R, C, [AdjacentUp, AdjacentDown]) :-
     nth0(C, LowerRow, AdjacentDown).
 get_vertical_adjacent_numbers(_, 1, 0, 0, []).
 
-get_adjacent_numbers(Board, Size, Row, Column, Adjacent) :-
+get_adjacent_numbers(Board, Size, Row, Column, AdjacentNumbers) :-
     get_horizontal_adjacent_numbers(Board, Size, Row, Column, HorizontalAdjacent),
     get_vertical_adjacent_numbers(Board, Size, Row, Column, VerticalAdjacent),
+    append(HorizontalAdjacent, VerticalAdjacent, AdjacentNumbers).
+
+
+get_horizontal_adjacent_coords(Size, R, 0, [Adjacent]) :-
+    R >= 0, R < Size, 
+    Adjacent = R-1.
+get_horizontal_adjacent_coords(Size, R, C, [Adjacent]) :-
+    Size =:= C + 1,
+    R >= 0, R < Size,
+    LeftPos is C - 1,
+    Adjacent = R-LeftPos.
+get_horizontal_adjacent_coords(Size, R, C, [AdjacentLeft, AdjacentRight]) :-
+    R >= 0, C >= 1, 
+    R < Size, C < Size - 1, 
+    LeftPos is C - 1,
+    RightPos is C + 1,
+    AdjacentLeft = R-LeftPos,
+    AdjacentRight = R-RightPos.
+get_horizontal_adjacent_coords(1, 0, 0, []).
+
+get_vertical_adjacent_coords(Size, 0, C, [Adjacent]) :-
+    C >= 0, C < Size, 
+    Adjacent = 1-C.
+get_vertical_adjacent_coords(Size, R, C, [Adjacent]) :-
+    Size =:= R + 1,
+    C >= 0, C < Size,
+    UpPos is R - 1,
+    Adjacent = UpPos-C.
+get_vertical_adjacent_coords(Size, R, C, [AdjacentUp, AdjacentDown]) :-
+    R >= 1, C >= 0, 
+    R < Size - 1, C < Size, 
+    UpPos is R - 1,
+    DownPos is R + 1,
+    AdjacentUp = UpPos-C,
+    AdjacentDown = DownPos-C.
+get_vertical_adjacent_coords(1, 0, 0, []).
+
+get_adjacent_coords(Size, Row, Column, Adjacent) :-
+    get_horizontal_adjacent_coords(Size, Row, Column, HorizontalAdjacent),
+    get_vertical_adjacent_coords(Size, Row, Column, VerticalAdjacent),
     append(HorizontalAdjacent, VerticalAdjacent, Adjacent).
 
 get_number(Board, Size, R, C, Number) :-
@@ -75,78 +109,41 @@ get_number(Board, Size, R, C, Number) :-
     nth0(R, Board, Row),
     nth0(C, Row, Number).
 
-get_adjacent_3(Board, Size, R, C, R3, C3) :-
-    PR is R - 1, NR is R + 1,
-    PC is C - 1, NC is C + 1,
-    ((get_number(Board, Size, PR, C, 3), R3 is PR, C3 is C);
-     (get_number(Board, Size, NR, C, 3), R3 is NR, C3 is C);
-     (get_number(Board, Size, R, PC, 3), R3 is R, C3 is PC);
-     (get_number(Board, Size, R, NC, 3), R3 is R, C3 is NC)).
+    
 
-get_adjacent_3(Board, Size, R, C, R3_1, C3_1, R3_2, C3_2) :-
-    get_adjacent_3(Board, Size, R, C, R3_1, C3_1),
-    (get_adjacent_3(Board, Size, R, C, R3_2, C3_2),
-    (R3_2 #\= R3_1; C3_2 #\= C3_1)).
+apply_different(_, _, [], _, _, _).
+apply_different(Board, Size, [R-C | T], Number, N, B) :-
+    get_number(Board, Size, R, C, PosNumber),
+    PosNumber #\= Number #<=> Diff,
+    M #\= N + B - (100 * Diff),
+    get_adjacent_numbers(Board, Size, R, C, AdjacentNumbers),
+    exactly(Number, AdjacentNumbers, M),
+    apply_different(Board, Size, T, Number, N, B).
 
-check_3_limit(Board, Size, R, C, 1) :-
-    get_adjacent_3(Board, Size, R, C, R3, C3),
-    get_adjacent_numbers(Board, Size, R3, C3, Adjacent),
-    exactly(3, Adjacent, 2).
-
-check_3_limit(Board, Size, R, C, 2) :-
-    get_adjacent_3(Board, Size, R, C, R3_1, C3_1, R3_2, C3_2),
-    get_adjacent_numbers(Board, Size, R3_1, C3_1, Adjacent1),
-    get_adjacent_numbers(Board, Size, R3_2, C3_2, Adjacent2),
-    exactly(3, Adjacent1, 1),
-    exactly(3, Adjacent2, 1).
-
-apply_constraint(Board, Size, R, C, 3) :-
-    get_adjacent_numbers(Board, Size, R, C, Adjacent),
-    exactly(3, Adjacent, 2),
-    check_3_limit(Board, Size, R, C, 2).
-
-apply_constraint(Board, Size, R, C, 3) :-
-    get_adjacent_numbers(Board, Size, R, C, Adjacent),
-    exactly(3, Adjacent, 1),
-    check_3_limit(Board, Size, R, C, 1).
-
-apply_constraint(Board, Size, R, C, 2) :-
-    get_adjacent_numbers(Board, Size, R, C, Adjacent),
-    exactly(2, Adjacent, 1).
-
-apply_constraint(Board, Size, R, C, 1) :-
-    get_adjacent_numbers(Board, Size, R, C, Adjacent),
-    exactly(1, Adjacent, 0).
-
-verify_column(_, _, Size, Size).
-verify_column(Board, R, C, Size) :-
+apply_constraint(Board, Size, R-C) :-
     get_number(Board, Size, R, C, Number),
-    apply_constraint(Board, Size, R, C, Number),
-    NC is C + 1,
-    verify_column(Board, R, NC, Size).
-
-verify_rows(_, Size, Size).
-verify_rows(Board, R, Size) :-
-    verify_column(Board, R, 0, Size),
-    NR is R + 1,
-    verify_rows(Board, NR, Size).
-
-valid_board(Board, Size) :-
-    verify_rows(Board, 0, Size).
-
-domain_row(Min, Max, Row) :-
-    domain(Row, Min, Max).
+    Number #< 3 #<=> B,
+    get_adjacent_numbers(Board, Size, R, C, AdjacentNumbers),
+    ((N #= Number - 1) #\/ (N #= Number - 2 + B)),
+    exactly(Number, AdjacentNumbers, N),
+    get_adjacent_coords(Size, R, C, Adjacent),
+    apply_different(Board, Size, Adjacent, Number, N, B).
 
 solve_puzzle(Board) :-
-    statistics(walltime, [Start,_]),
 
     length(Board, Size),
-    maplist(domain_row(1, 3), Board),
-    valid_board(Board, Size),
-    flatten_board(Board, FlatBoard),
+    Max is Size - 1,
+
+    append(Board, FlatBoard),
+    domain(FlatBoard, 1, 3),
+    findall(R-C, (between(0, Max, R), between(0, Max, C)), Positions),
+    maplist(apply_constraint(Board, Size), Positions),
+    write('.'),
+    statistics(walltime, [Start,_]),
     labeling([], FlatBoard),
-    display_solution(Board, Size),
-    
     statistics(walltime, [End,_]),
 	Time is End - Start,
-    format(' > Duration: ~3d s~n', [Time]), nl.
+    
+    %display_solution(Board, Size),
+    format(' > Duration: ~3d s~n', [Time]), nl,
+    format(' > Statistics: ', []), nl, nl, fd_statistics, nl.
