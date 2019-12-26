@@ -1,5 +1,8 @@
 :- use_module(library(lists)).
 
+write_element(Element) :-
+    ((var(Element), write('X')) ; write(Element)).
+    
 draw_header(0).
 draw_header(N) :-
     write(' ---'),
@@ -9,7 +12,7 @@ draw_header(N) :-
 draw_board_row([]) :- 
     write(' | '), nl.
 draw_board_row([Element | RestRow]) :-
-    write(' | '), write(Element),
+    write(' | '), write_element(Element),
     draw_board_row(RestRow).
 
 draw_board(L, Row) :-
