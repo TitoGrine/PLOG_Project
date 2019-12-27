@@ -49,16 +49,17 @@ get_adjacent_numbers(Board, Size, Row, Column, AdjacentNumbers) :-
 % Following predicate colects all adjacent tiles of a list of tiles
 % Note that it does not discard the ones already present in the list
 get_adjacent_numbers_of_list(Board, Size, List, Adjacent) :-
-    get_adjacent_numbers_of_list(Board, Size, List, [], Adjacent).
+    get_adjacent_numbers_of_list(Board, Size, List, [], AdjacentWithDuplicates),
+    remove_dups(AdjacentWithDuplicates, Adjacent).
 
 get_adjacent_numbers_of_list(_, _, [], Adjacent, Adjacent).
 
 get_adjacent_numbers_of_list(Board, Size, [[Row, Column] | Rest], AdjacentTillNow, Adjacent) :-
     get_horizontal_adjacent_numbers(Board, Size, Row, Column, HorizontalAdjacent),
     get_vertical_adjacent_numbers(Board, Size, Row, Column, VerticalAdjacent),
-    append(HorizontalAdjacent, AdjacentTillNow, AdjacentTillNow),
-    append(VerticalAdjacent, AdjacentTillNow, AdjacentTillNow),
-    get_adjacent_numbers_of_list(Board, Size, Rest, AdjacentTillNow, Adjacent).
+    append(HorizontalAdjacent, AdjacentTillNow, TempAdj),
+    append(VerticalAdjacent, TempAdj, NewAdjacentTillNow),
+    get_adjacent_numbers_of_list(Board, Size, Rest, NewAdjacentTillNow, Adjacent).
 
 get_horizontal_adjacent_coords(Size, R, 0, [Adjacent]) :-
     R >= 0, R < Size, 
@@ -98,3 +99,18 @@ get_adjacent_coords(Size, Row, Column, Adjacent) :-
     get_horizontal_adjacent_coords(Size, Row, Column, HorizontalAdjacent),
     get_vertical_adjacent_coords(Size, Row, Column, VerticalAdjacent),
     append(HorizontalAdjacent, VerticalAdjacent, Adjacent).
+
+% Filter Adjacents removes from Adjacent the members of ToRemove
+filter_adjacents(ToRemove, Adjacent, Filtered) :-
+    filter_adjacents(ToRemove, Adjacent, [], Filtered).
+
+filter_adjacents(_, [], Filtered, Filtered).
+
+filter_adjacents(ToRemove, [Head | Tail], FilteredTillNow, Filtered) :-
+    \+ member(Head, ToRemove), !,
+    append(FilteredTillNow, [Head], NewFilteredTillNow),
+    filter_adjacents(ToRemove, Tail, NewFilteredTillNow, Filtered).
+
+filter_adjacents(ToRemove, [Head | Tail], FilteredTillNow, Filtered) :-
+    member(Head, ToRemove), !,
+    filter_adjacents(ToRemove, Tail, FilteredTillNow, Filtered).
