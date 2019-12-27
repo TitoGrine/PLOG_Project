@@ -1,8 +1,8 @@
 :- use_module(library(lists)).
 
 write_element(Element) :-
-    ((var(Element), write('X')) ; write(Element)).
-    
+    (((var(Element) ; Element is 0), write('X')) ; write(Element)).
+
 draw_header(0).
 draw_header(N) :-
     write(' ---'),
@@ -19,7 +19,7 @@ draw_board(L, Row) :-
     write(' '), draw_header(L), nl,
     draw_board_row(Row).
 
-display_solution(Board, L) :-
+display_board(Board, L) :-
     nl, write('Solution:'), nl, nl,
     maplist(draw_board(L), Board),
     write(' '), draw_header(L), nl, nl, !.

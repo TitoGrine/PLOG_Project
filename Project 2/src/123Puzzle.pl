@@ -2,8 +2,17 @@
 :- include('puzzleDatabase.pl').
 :- use_module(library(clpfd)).
 :- use_module(library(lists)).
+:- use_module(library(random)).
 :- use_module(library(between)).
 :- use_module(library(system)).
+
+selRandom(ListOfVars, Var, Rest) :-
+    random_select(Var, ListOfVars, Rest). 
+
+selRandom(Var, _Rest, BB0, BB1) :-
+    fd_set(Var, Set), fdset_to_list(Set, List),
+    random_member(Value, List),
+    (first_bound(BB0, BB1), Var #= Value ; later_bound(BB0, BB1), Var #\= Value ).
 
 exactly(_, [], 0).
 exactly(X, [Y|L], N) :-
@@ -108,9 +117,7 @@ get_number(Board, Size, R, C, Number) :-
     R < Size, C < Size,
     nth0(R, Board, Row),
     nth0(C, Row, Number).
-
     
-
 apply_different(_, _, [], _, _, _).
 apply_different(Board, Size, [R-C | T], Number, N, B) :-
     get_number(Board, Size, R, C, PosNumber),
@@ -129,6 +136,15 @@ apply_constraint(Board, Size, R-C) :-
     get_adjacent_coords(Size, R, C, Adjacent),
     apply_different(Board, Size, Adjacent, Number, N, B).
 
+random_solution(Board) :-
+    length(Board, Size),
+    Max is Size - 1,
+    append(Board, FlatBoard),
+    domain(FlatBoard, 1, 3),
+    findall(R-C, (between(0, Max, R), between(0, Max, C)), Positions),
+    maplist(apply_constraint(Board, Size), Positions),
+    labeling([value(selRandom)], FlatBoard).
+
 solve_puzzle(Board) :-
 
     length(Board, Size),
@@ -144,6 +160,34 @@ solve_puzzle(Board) :-
     statistics(walltime, [End,_]),
 	Time is End - Start,
     
-    %display_solution(Board, Size),
-    format(' > Duration: ~3d s~n', [Time]), nl,
-    format(' > Statistics: ', []), nl, nl, fd_statistics, nl.
+    display_board(Board, Size),
+    format(' > Duration: ~3d s~n~n', [Time]),
+    format(' > Statistics: ~n~n', []), fd_statistics, nl.
+
+board_picking([], [], 0).
+board_picking([Var | RB], [Number | RFB], Clues) :-
+    Var #= Number #<=> N,
+    Clues #= N + OtherClues,
+    board_picking(RB, RFB, OtherClues).
+
+generate_puzzle(Dimensions, Board) :-
+    generate_empty_board(Dimensions, Board),
+    generate_empty_board(Dimensions, FullBoard),
+    random_solution(FullBoard),
+    NumberCells is Dimensions * Dimensions,
+    Lower is floor(NumberCells / 7.0), Upper is ceiling(NumberCells / 6.0),
+    random(Lower, Upper, Clues), Blanks is NumberCells - Clues, !,
+    append(Board, FlatBoard), append(FullBoard, FlatFullBoard),
+    domain(FlatBoard, 0, 3),
+    board_picking(FlatBoard, FlatFullBoard, Clues),
+    global_cardinality(FlatBoard, [0-Blanks, 1-_, 2-_, 3-_]),
+    statistics(walltime, [Start,_]),
+    write('.'),
+    labeling([variable(selRandom), enum], FlatBoard),
+    statistics(walltime, [End,_]),
+	Time is End - Start,
+
+    %display_board(FullBoard, Dimensions),
+    display_board(Board, Dimensions),
+    format(' > Duration: ~3d s~n~n', [Time]),
+    format(' > Statistics: ~n~n', []), fd_statistics, nl.
