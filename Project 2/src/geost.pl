@@ -42,7 +42,7 @@ get_2_1(_, Size, R, _, []) :-
 
 % Get 2 - 2 fetchs 2 tiles where the first is below the other
 % If it is impossible to fetch such tiles it returns an empty list.
-get_2_2(Board, _, R, C, Tiles) :-
+get_2_2(Board, Size, R, C, Tiles) :-
     R > 0, !,
     PrevR is R - 1,
     get_number(Board, Size, R, C, Tile1),
@@ -66,7 +66,7 @@ get_2_3(_, Size, _, C, []) :-
 
 % Get 2 - 4 fetchs 2 tiles where the first is at the right of the other
 % If it is impossible to fetch such tiles it returns an empty list.
-get_2_4(Board, _, R, C, Tiles) :-
+get_2_4(Board, Size, R, C, Tiles) :-
     C > 0, !,
     PrevC is C - 1,
     get_number(Board, Size, R, C, Tile1),
@@ -113,7 +113,7 @@ get_3_1_2(_, Size, R, C, []) :-
 % Get 3 - 1 - 3 fetchs 3 tiles where the first is at the right bottom corner of an L piece
 % Check piece_map.png for 3 tiles pieces, row 1, shape 3
 % If it is impossible to fetch such tiles it returns an empty list.
-get_3_1_3(Board, _, R, C, Tiles) :-
+get_3_1_3(Board, Size, R, C, Tiles) :-
     C > 0,
     R > 0, !,
     PrevR is R - 1,
@@ -198,7 +198,7 @@ get_3_3_1(_, Size, R, C, []) :-
 % Get 3 - 3 - 2 fetchs 3 tiles where the first is at the right bottom corner of an L piece
 % Check piece_map.png for 3 tiles pieces, row 3, shape 2
 % If it is impossible to fetch such tiles it returns an empty list.
-get_3_3_2(Board, _, R, C, Tiles) :-
+get_3_3_2(Board, Size, R, C, Tiles) :-
     C > 0,
     R > 0, !,
     PrevR is R - 1,
@@ -232,7 +232,7 @@ get_3_3_3(_, Size, R, C, []) :-
 % Get 3 - 4 - 1 fetchs 3 tiles where the first is at the right bottom corner of an L piece
 % Check piece_map.png for 3 tiles pieces, row 4, shape 1
 % If it is impossible to fetch such tiles it returns an empty list.
-get_3_4_1(Board, _, R, C, Tiles) :-
+get_3_4_1(Board, Size, R, C, Tiles) :-
     C > 0,
     R > 0, !,
     PrevR is R - 1,
@@ -316,7 +316,7 @@ get_3_5_2(_, Size, _, C, []) :-
 % Get 3 - 5 - 3 fetchs 3 tiles where the first is in the left corner of a horizontal piece
 % Check piece_map.png for 3 tiles pieces, row 5, shape 3
 % If it is impossible to fetch such tiles it returns an empty list.
-get_3_5_3(Board, _, R, C, Tiles) :-
+get_3_5_3(Board, Size, R, C, Tiles) :-
     C > 1, !,
     PrevC is C - 1,
     PrevPrevC is PrevC - 1,
@@ -365,7 +365,7 @@ get_3_6_2(_, Size, R, _, []) :-
 % Get 3 - 6 - 3 fetchs 3 tiles where the first is in the bottom tile of a vertical piece
 % Check piece_map.png for 3 tiles pieces, row 6, shape 3
 % If it is impossible to fetch such tiles it returns an empty list.
-get_3_6_3(Board, _, R, C, Tiles) :-
+get_3_6_3(Board, Size, R, C, Tiles) :-
     R > 1, !,
     PrevR is R - 1,
     PrevPrevR is PrevR - 1,
