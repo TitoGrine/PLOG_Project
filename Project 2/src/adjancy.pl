@@ -161,3 +161,45 @@ get_2_4_adjacents(Board, Size, R, C, Adjacents) :-
     ((get_number(Board, Size, R, NextC, Tile2), TileRight = [Tile2]) ; TileRight = []), !,
     append(TileLeft, TileRight, HorizontalAdjacents),
     append(HorizontalAdjacents, VerticalAdjacents, Adjacents).
+
+% Get 3 - 1 - 1 Adjacents
+% Fetchs the adjacent tiles for shape_3_1_1
+get_3_1_1_adjacents(Board, Size, R, C, Adjacents) :-
+    PrevR is R - 1,
+    NextR is R + 1,
+    Next2R is R + 2,
+    PrevC is C - 1, 
+    NextC is C + 1,
+    Next2C is C + 2,
+    get_vertical_adjacent_numbers(Board, Size, R, C, Vertical1),
+    ((get_number(Board, Size, PrevR, NextC, Tile1), TileTop = [Tile1]) ; TileTop = []), !,
+    ((get_number(Board, Size, Next2R, NextC, Tile2), TileBot = [Tile2]) ; TileBot = []), !,
+    append(TileTop, TileBot, Vertical2),
+    append(Vertical1, Vertical2, VerticalAdjacents), !,
+    ((get_number(Board, Size, R, PrevC, Tile3), TileLeft = [Tile3]) ; TileLeft = []), !,
+    ((get_number(Board, Size, R, Next2C, Tile4), TileRight = [Tile4]) ; TileRight = []), !,
+    ((get_number(Board, Size, NextR, Next2C, Tile5), TileRightBot = [Tile5]) ; TileRightBot = []), !,
+    append(TileLeft, TileRight, Horizontal1),
+    append(Horizontal1, TileRightBot, HorizontalAdjacents),
+    append(HorizontalAdjacents, VerticalAdjacents, Adjacents).
+
+% Get 3 - 1 - 2 Adjacents
+% Fetchs the adjacent tiles for shape_3_1_2
+get_3_1_2_adjacents(Board, Size, R, C, Adjacents) :-
+    PrevR is R - 1,
+    NextR is R + 1,
+    Next2R is R + 2,
+    PrevC is C - 1, 
+    Prev2C is C - 2,
+    NextC is C + 1,
+    get_vertical_adjacent_numbers(Board, Size, R, PrevC, Vertical1),
+    ((get_number(Board, Size, PrevR, C, Tile1), TileTop = [Tile1]) ; TileTop = []), !,
+    ((get_number(Board, Size, Next2R, C, Tile2), TileBot = [Tile2]) ; TileBot = []), !,
+    append(TileTop, TileBot, Vertical2),
+    append(Vertical1, Vertical2, VerticalAdjacents), !,
+    ((get_number(Board, Size, R, Prev2C, Tile3), TileLeft = [Tile3]) ; TileLeft = []), !,
+    ((get_number(Board, Size, R, NextC, Tile4), TileRight = [Tile4]) ; TileRight = []), !,
+    ((get_number(Board, Size, NextR, NextC, Tile5), TileRightBot = [Tile5]) ; TileRightBot = []), !,
+    append(TileLeft, TileRight, Horizontal1),
+    append(Horizontal1, TileRightBot, HorizontalAdjacents),
+    append(HorizontalAdjacents, VerticalAdjacents, Adjacents).
