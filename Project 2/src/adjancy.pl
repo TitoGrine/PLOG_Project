@@ -99,18 +99,3 @@ get_adjacent_coords(Size, Row, Column, Adjacent) :-
     get_horizontal_adjacent_coords(Size, Row, Column, HorizontalAdjacent),
     get_vertical_adjacent_coords(Size, Row, Column, VerticalAdjacent),
     append(HorizontalAdjacent, VerticalAdjacent, Adjacent).
-
-% Filter Adjacents removes from Adjacent the members of ToRemove
-filter_adjacents(ToRemove, Adjacent, Filtered) :-
-    filter_adjacents(ToRemove, Adjacent, [], Filtered).
-
-filter_adjacents(_, [], Filtered, Filtered).
-
-filter_adjacents(ToRemove, [Head | Tail], FilteredTillNow, Filtered) :-
-    \+ member(Head, ToRemove), !,
-    append(FilteredTillNow, [Head], NewFilteredTillNow),
-    filter_adjacents(ToRemove, Tail, NewFilteredTillNow, Filtered).
-
-filter_adjacents(ToRemove, [Head | Tail], FilteredTillNow, Filtered) :-
-    member(Head, ToRemove), !,
-    filter_adjacents(ToRemove, Tail, FilteredTillNow, Filtered).
