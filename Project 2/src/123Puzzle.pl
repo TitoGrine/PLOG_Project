@@ -26,12 +26,6 @@ row_list(Size, Row) :-
 generate_empty_board(Size, Board) :-
     length(Board, Size),
     maplist(row_list(Size), Board).
-
-get_number(Board, Size, R, C, Number) :-
-    R >= 0, C >= 0, 
-    R < Size, C < Size,
-    nth0(R, Board, Row),
-    nth0(C, Row, Number).
     
 apply_different(_, _, [], _, _, _).
 apply_different(Board, Size, [R-C | T], Number, N, B) :-

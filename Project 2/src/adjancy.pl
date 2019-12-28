@@ -1,5 +1,11 @@
 :- use_module(library(lists)).
 
+get_number(Board, Size, R, C, Number) :-
+    R >= 0, C >= 0, 
+    R < Size, C < Size,
+    nth0(R, Board, Row),
+    nth0(C, Row, Number).
+
 get_horizontal_adjacent_numbers(Board, Size, R, 0, [Adjacent]) :-
     R >= 0, R < Size, 
     nth0(R, Board, Row),
@@ -99,3 +105,59 @@ get_adjacent_coords(Size, Row, Column, Adjacent) :-
     get_horizontal_adjacent_coords(Size, Row, Column, HorizontalAdjacent),
     get_vertical_adjacent_coords(Size, Row, Column, VerticalAdjacent),
     append(HorizontalAdjacent, VerticalAdjacent, Adjacent).
+
+% Get 2 - 1 Adjacents
+% Fetchs the adjacent tiles for shape_2_1
+get_2_1_adjacents(Board, Size, R, C, Adjacents) :-
+    PrevR is R - 1,
+    NextR is R + 1,
+    Next2R is R + 2,
+    get_horizontal_adjacent_numbers(Board, Size, R, C, Horizontal1),
+    get_horizontal_adjacent_numbers(Board, Size, NextR, C, Horizontal2),
+    append(Horizontal1, Horizontal2, HorizontalAdjacents), !,
+    ((get_number(Board, Size, PrevR, C, Tile1), TileTop = [Tile1]) ; TileTop = []), !,
+    ((get_number(Board, Size, Next2R, C, Tile2), TileBot = [Tile2]) ; TileBot = []), !,
+    append(TileTop, TileBot, VerticalAdjacents),
+    append(HorizontalAdjacents, VerticalAdjacents, Adjacents).
+
+% Get 2 - 2 Adjacents
+% Fetchs the adjacent tiles for shape_2_2
+get_2_2_adjacents(Board, Size, R, C, Adjacents) :-
+    PrevR is R - 1,
+    Prev2R is R - 2,
+    NextR is R + 1,
+    get_horizontal_adjacent_numbers(Board, Size, R, C, Horizontal1),
+    get_horizontal_adjacent_numbers(Board, Size, PrevR, C, Horizontal2),
+    append(Horizontal1, Horizontal2, HorizontalAdjacents), !,
+    ((get_number(Board, Size, Prev2R, C, Tile1), TileTop = [Tile1]) ; TileTop = []), !,
+    ((get_number(Board, Size, NextR, C, Tile2), TileBot = [Tile2]) ; TileBot = []), !,
+    append(TileTop, TileBot, VerticalAdjacents),
+    append(HorizontalAdjacents, VerticalAdjacents, Adjacents).
+
+% Get 2 - 3 Adjacents
+% Fetchs the adjacent tiles for shape_2_3
+get_2_3_adjacents(Board, Size, R, C, Adjacents) :-
+    PrevC is C - 1,
+    NextC is C + 1,
+    Next2C is C + 2,
+    get_vertical_adjacent_numbers(Board, Size, R, C, Vertical1),
+    get_vertical_adjacent_numbers(Board, Size, R, NextC, Vertical2),
+    append(Vertical1, Vertical2, VerticalAdjacents), !,
+    ((get_number(Board, Size, R, PrevC, Tile1), TileLeft = [Tile1]) ; TileLeft = []), !,
+    ((get_number(Board, Size, R, Next2C, Tile2), TileRight = [Tile2]) ; TileRight = []), !,
+    append(TileLeft, TileRight, HorizontalAdjacents),
+    append(HorizontalAdjacents, VerticalAdjacents, Adjacents).
+
+% Get 2 - 4 Adjacents
+% Fetchs the adjacent tiles for shape_2_4
+get_2_4_adjacents(Board, Size, R, C, Adjacents) :-
+    PrevC is C - 1,
+    Prev2C is C - 2,
+    NextC is C + 1,
+    get_vertical_adjacent_numbers(Board, Size, R, C, Vertical1),
+    get_vertical_adjacent_numbers(Board, Size, R, PrevC, Vertical2),
+    append(Vertical1, Vertical2, VerticalAdjacents), !,
+    ((get_number(Board, Size, R, Prev2C, Tile1), TileLeft = [Tile1]) ; TileLeft = []), !,
+    ((get_number(Board, Size, R, NextC, Tile2), TileRight = [Tile2]) ; TileRight = []), !,
+    append(TileLeft, TileRight, HorizontalAdjacents),
+    append(HorizontalAdjacents, VerticalAdjacents, Adjacents).
