@@ -1,5 +1,11 @@
 :- use_module(library(lists)).
 
+exactly(_, [], 0).
+exactly(X, [Y|L], N) :-
+    X #= Y #<=> B,
+    N #= M+B,
+    exactly(X, L, M).
+
 get_number(Board, Size, R, C, Number) :-
     R >= 0, C >= 0, 
     R < Size, C < Size,
@@ -515,4 +521,3 @@ get_3_6_3_adjacents(Board, Size, R, C, Adjacents) :-
     ((get_number(Board, Size, NextR, C, Tile2), TileBot = [Tile2]) ; TileBot = []), !,
     append(TileTop, TileBot, VerticalAdjacents),
     append(HorizontalAdjacents, VerticalAdjacents, Adjacents).
-    

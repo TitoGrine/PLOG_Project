@@ -386,13 +386,14 @@ shape_1(Board, Size, Row, Column) :-
     get_number(Board, Size, Row, Column, Tile),
     get_adjacent_numbers(Board, Size, Row, Column, Adjacents),
     Tile #= 1,
-    maplist(is_not_1, Adjacents).
+    global_cardinality(Adjacents, [1-0, 2-_, 3-_]).
 
 % Shape 2 applies the restrictions to a 2 shape list of tiles
 % and to its adjacent tiles.
 shape_2(Tiles, Adjacents) :-
-    maplist(is_2, Tiles),
-    maplist(is_not_2, Adjacents).
+    length(Tiles, Length),
+    global_cardinality(Tiles, [1-0, 2-Length, 3-0]),
+    global_cardinality(Adjacents, [1-_, 2-0, 3-_]).
 
 % Shape 2 - 1
 % Gets a 2 - 1 shape and applies restrictions.
@@ -433,8 +434,9 @@ shape_2_4(Board, Size, Row, Column) :-
 % Shape 3 applies the restrictions to a 3 shape list of tiles
 % and to its adjacent tiles
 shape_3(Tiles, Adjacents) :-
-    maplist(is_3, Tiles),
-    maplist(is_not_3, Adjacents).
+    length(Tiles, Length),
+    global_cardinality(Tiles, [1-0, 2-0, 3-Length]),
+    global_cardinality(Adjacents, [1-_, 2-_, 3-0]).
 
 % Shape 3 - 1 - 1
 % Gets a 3 - 1 - 1 shape and applies restrictions.
@@ -605,29 +607,31 @@ shape_3_6_3(Board, Size, Row, Column) :-
 % When a piece is not valid, the shape predicates return false,
 % which is neutral in a disjunction.
 apply_constraint_geost(Board, Size, Row-Column) :-
-    (shape_1(Board, Size, Row, Column) ; true), !,
-    (shape_2_1(Board, Size, Row, Column) ; true), !,
-    (shape_2_2(Board, Size, Row, Column) ; true), !,
-    (shape_2_3(Board, Size, Row, Column) ; true), !,
-    (shape_2_4(Board, Size, Row, Column) ; true), !,
-    (shape_3_1_1(Board, Size, Row, Column) ; true), !,
-    (shape_3_1_2(Board, Size, Row, Column) ; true), !,
-    (shape_3_1_3(Board, Size, Row, Column) ; true), !,
-    (shape_3_2_1(Board, Size, Row, Column) ; true), !,
-    (shape_3_2_2(Board, Size, Row, Column) ; true), !,
-    (shape_3_2_3(Board, Size, Row, Column) ; true), !,
-    (shape_3_3_1(Board, Size, Row, Column) ; true), !,
-    (shape_3_3_2(Board, Size, Row, Column) ; true), !,
-    (shape_3_3_3(Board, Size, Row, Column) ; true), !,
-    (shape_3_4_1(Board, Size, Row, Column) ; true), !,
-    (shape_3_4_2(Board, Size, Row, Column) ; true), !,
-    (shape_3_4_3(Board, Size, Row, Column) ; true), !,
-    (shape_3_5_1(Board, Size, Row, Column) ; true), !,
-    (shape_3_5_2(Board, Size, Row, Column) ; true), !,
-    (shape_3_5_3(Board, Size, Row, Column) ; true), !,
-    (shape_3_6_1(Board, Size, Row, Column) ; true), !,
-    (shape_3_6_2(Board, Size, Row, Column) ; true), !,
-    (shape_3_6_3(Board, Size, Row, Column) ; true).
+    N is 0,
+    ((shape_1(Board, Size, Row, Column), N1 = N) ; (true, N1 is N + 1)), !,
+    ((shape_2_1(Board, Size, Row, Column), N2 = N1) ; (true, N2 is N1 + 1)), !,
+    ((shape_2_2(Board, Size, Row, Column), N3 = N2) ; (true, N3 is N2 + 1)), !,
+    ((shape_2_3(Board, Size, Row, Column), N4 = N3) ; (true, N4 is N3 + 1)), !,
+    ((shape_2_4(Board, Size, Row, Column), N5 = N4) ; (true, N5 is N4 + 1)), !,
+    ((shape_3_1_1(Board, Size, Row, Column), N6 = N5) ; (true, N6 is  N5 + 1)), !,
+    ((shape_3_1_2(Board, Size, Row, Column), N7 = N6) ; (true, N7 is  N6 + 1)), !,
+    ((shape_3_1_3(Board, Size, Row, Column), N8 = N7) ; (true, N8 is  N7 + 1)), !,
+    ((shape_3_2_1(Board, Size, Row, Column), N9 = N8) ; (true, N9 is  N8 + 1)), !,
+    ((shape_3_2_2(Board, Size, Row, Column), N10 = N9) ; (true, N10 is  N9 + 1)), !,
+    ((shape_3_2_3(Board, Size, Row, Column), N11 = N10) ; (true, N11 is N10 + 1)), !,
+    ((shape_3_3_1(Board, Size, Row, Column), N12 = N11) ; (true, N12 is N11 + 1)), !,
+    ((shape_3_3_2(Board, Size, Row, Column), N13 = N12) ; (true, N13 is N12 + 1)), !,
+    ((shape_3_3_3(Board, Size, Row, Column), N14 = N13) ; (true, N14 is N13 + 1)), !,
+    ((shape_3_4_1(Board, Size, Row, Column), N15 = N14) ; (true, N15 is N14 + 1)), !,
+    ((shape_3_4_2(Board, Size, Row, Column), N16 = N15) ; (true, N16 is N15 + 1)), !,
+    ((shape_3_4_3(Board, Size, Row, Column), N17 = N16) ; (true, N17 is N16 + 1)), !,
+    ((shape_3_5_1(Board, Size, Row, Column), N18 = N17) ; (true, N18 is N17 + 1)), !,
+    ((shape_3_5_2(Board, Size, Row, Column), N19 = N18) ; (true, N19 is N18 + 1)), !,
+    ((shape_3_5_3(Board, Size, Row, Column), N20 = N19) ; (true, N20 is N19 + 1)), !,
+    ((shape_3_6_1(Board, Size, Row, Column), N21 = N20) ; (true, N21 is N20 + 1)), !,
+    ((shape_3_6_2(Board, Size, Row, Column), N22 = N21) ; (true, N22 is N21 + 1)), !,
+    ((shape_3_6_3(Board, Size, Row, Column), N23 = N22) ; (true, N23 is N22 + 1)), !,
+    N23 =\= 23.
 
 % Solves the 123 puzzle using the geost-like approach
 solve_puzzle_geost(Board) :-
