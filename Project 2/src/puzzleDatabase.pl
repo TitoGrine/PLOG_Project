@@ -1,4 +1,12 @@
 
+puzzle3x3_1([[3, 3, _],
+             [_, 2, _],
+             [3, 3, 3]]).
+
+puzzle3x3_2([[_, 3, _],
+             [_, _, 3],
+             [_, _, _]]).
+
 % 4x4 Puzzles with only one solution
 
 puzzle4x4_1([[_, _, _, _],

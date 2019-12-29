@@ -171,23 +171,68 @@ board_picking([Var | RB], [Number | RFB], Clues) :-
     board_picking(RB, RFB, OtherClues).
 
 generate_puzzle(Dimensions, Board) :-
-    generate_empty_board(Dimensions, Board),
+    generate_empty_board(Dimensions, TempBoard),
     generate_empty_board(Dimensions, FullBoard),
     random_solution(FullBoard),
     NumberCells is Dimensions * Dimensions,
     Lower is floor(NumberCells / 7.0), Upper is ceiling(NumberCells / 6.0),
     random(Lower, Upper, Clues), Blanks is NumberCells - Clues, !,
-    append(Board, FlatBoard), append(FullBoard, FlatFullBoard),
+    append(TempBoard, FlatBoard), append(FullBoard, FlatFullBoard),
     domain(FlatBoard, 0, 3),
     board_picking(FlatBoard, FlatFullBoard, Clues),
     global_cardinality(FlatBoard, [0-Blanks, 1-_, 2-_, 3-_]),
-    statistics(walltime, [Start,_]),
-    write('.'),
     labeling([variable(selRandom), enum], FlatBoard),
-    statistics(walltime, [End,_]),
-	Time is End - Start,
+    clear_board_zeros(TempBoard, Board).
+    % statistics(walltime, [Start,_]),
+    % write('.'),
+    %labeling([variable(selRandom), enum], FlatBoard),
+    % statistics(walltime, [End,_]),
+	% Time is End - Start,
 
-    %display_board(FullBoard, Dimensions),
-    display_board(Board, Dimensions),
-    format(' > Duration: ~3d s~n~n', [Time]),
-    format(' > Statistics: ~n~n', []), fd_statistics, nl.
+    % %display_board(FullBoard, Dimensions),
+    % display_board(Board, Dimensions),
+    % format(' > Duration: ~3d s~n~n', [Time]),
+    % format(' > Statistics: ~n~n', []), fd_statistics, nl.
+
+clear_board_zeros(Board, CleanBoard) :-
+    length(Board, Dimensions),
+    generate_empty_board(Dimensions, CleanBoard),
+    clear_list_zeros(Board, CleanBoard).
+
+clear_list_zeros([], []).
+
+clear_list_zeros([Row1 | Rest1], [Row2 | Rest2]) :-
+    clear_row_zeros(Row1, Row2), !,
+    clear_list_zeros(Rest1, Rest2).
+
+clear_row_zeros([], []).
+
+clear_row_zeros([H1 | T1], [H1 | T2]) :-
+    H1 =\= 0, !,
+    clear_row_zeros(T1, T2).
+
+clear_row_zeros([H1 | T1], [_ | T2]) :-
+    H1 =:= 0,
+    clear_row_zeros(T1, T2).
+
+% The following version of the count_solutions is intended to be used when solve_puzzle displays the solution.
+count_solutions(Board, NumSolutions) :-
+    length(Board, Size),
+    Max is Size - 1,
+    append(Board, FlatBoard),
+
+    domain(FlatBoard, 1, 3),
+    findall(R-C, (between(0, Max, R), between(0, Max, C)), Positions),
+    maplist(apply_constraint(Board, Size), Positions),
+
+    findall(FlatBoard, labeling([], FlatBoard), ListSolutions),
+    length(ListSolutions, NumSolutions).
+
+% The following version of the predicate works fine if solve_puzzle does not display the solution.
+% count_solutions(Board, NumSolutions) :-
+%     findall(_, solve_puzzle(Board), List),
+%     length(List, NumSolutions).
+
+generate_unique_puzzle(Dimensions, Board) :-
+    generate_puzzle(Dimensions, Board),
+    count_solutions(Board, 1).
