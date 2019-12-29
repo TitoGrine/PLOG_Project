@@ -1,5 +1,8 @@
 :- use_module(library(clpfd)).
 :- use_module(library(lists)).
+:- use_module(library(between)).
+%:- use_module(library(random)).
+%:- use_module(library(system)).
 :- include('display.pl').
 :- include('puzzleDatabase.pl').
 :- include('adjancy.pl').
@@ -432,3 +435,216 @@ shape_2_4(Board, Size, Row, Column) :-
 shape_3(Tiles, Adjacents) :-
     maplist(is_3, Tiles),
     maplist(is_not_3, Adjacents).
+
+% Shape 3 - 1 - 1
+% Gets a 3 - 1 - 1 shape and applies restrictions.
+% If it is not possible to use this shape, the predicate fails and restricts nothing
+shape_3_1_1(Board, Size, Row, Column) :-
+    get_3_1_1(Board, Size, Row, Column, Tiles),
+    Tiles \= [], !,
+    get_3_1_1_adjacents(Board, Size, Row, Column, Adjacents),
+    shape_3(Tiles, Adjacents).
+
+% Shape 3 - 1 - 2
+% Gets a 3 - 1 - 2 shape and applies restrictions.
+% If it is not possible to use this shape, the predicate fails and restricts nothing
+shape_3_1_2(Board, Size, Row, Column) :-
+    get_3_1_2(Board, Size, Row, Column, Tiles),
+    Tiles \= [], !,
+    get_3_1_2_adjacents(Board, Size, Row, Column, Adjacents),
+    shape_3(Tiles, Adjacents).
+
+% Shape 3 - 1 - 3
+% Gets a 3 - 1 - 3 shape and applies restrictions.
+% If it is not possible to use this shape, the predicate fails and restricts nothing
+shape_3_1_3(Board, Size, Row, Column) :-
+    get_3_1_3(Board, Size, Row, Column, Tiles),
+    Tiles \= [], !,
+    get_3_1_3_adjacents(Board, Size, Row, Column, Adjacents),
+    shape_3(Tiles, Adjacents).
+
+% Shape 3 - 2 - 1
+% Gets a 3 - 2 - 1 shape and applies restrictions.
+% If it is not possible to use this shape, the predicate fails and restricts nothing
+shape_3_2_1(Board, Size, Row, Column) :-
+    get_3_2_1(Board, Size, Row, Column, Tiles),
+    Tiles \= [], !,
+    get_3_2_1_adjacents(Board, Size, Row, Column, Adjacents),
+    shape_3(Tiles, Adjacents).
+
+% Shape 3 - 2 - 2
+% Gets a 3 - 2 - 2 shape and applies restrictions.
+% If it is not possible to use this shape, the predicate fails and restricts nothing
+shape_3_2_2(Board, Size, Row, Column) :-
+    get_3_2_2(Board, Size, Row, Column, Tiles),
+    Tiles \= [], !,
+    get_3_2_2_adjacents(Board, Size, Row, Column, Adjacents),
+    shape_3(Tiles, Adjacents).
+
+% Shape 3 - 2 - 3
+% Gets a 3 - 2 - 3 shape and applies restrictions.
+% If it is not possible to use this shape, the predicate fails and restricts nothing
+shape_3_2_3(Board, Size, Row, Column) :-
+    get_3_2_3(Board, Size, Row, Column, Tiles),
+    Tiles \= [], !,
+    get_3_2_3_adjacents(Board, Size, Row, Column, Adjacents),
+    shape_3(Tiles, Adjacents).
+
+% Shape 3 - 3 - 1
+% Gets a 3 - 3 - 1 shape and applies restrictions.
+% If it is not possible to use this shape, the predicate fails and restricts nothing
+shape_3_3_1(Board, Size, Row, Column) :-
+    get_3_3_1(Board, Size, Row, Column, Tiles),
+    Tiles \= [], !,
+    get_3_3_1_adjacents(Board, Size, Row, Column, Adjacents),
+    shape_3(Tiles, Adjacents).
+
+% Shape 3 - 3 - 2
+% Gets a 3 - 3 - 2 shape and applies restrictions.
+% If it is not possible to use this shape, the predicate fails and restricts nothing
+shape_3_3_2(Board, Size, Row, Column) :-
+    get_3_3_2(Board, Size, Row, Column, Tiles),
+    Tiles \= [], !,
+    get_3_3_2_adjacents(Board, Size, Row, Column, Adjacents),
+    shape_3(Tiles, Adjacents).
+
+% Shape 3 - 3 - 3
+% Gets a 3 - 3 - 3 shape and applies restrictions.
+% If it is not possible to use this shape, the predicate fails and restricts nothing
+shape_3_3_3(Board, Size, Row, Column) :-
+    get_3_3_3(Board, Size, Row, Column, Tiles),
+    Tiles \= [], !,
+    get_3_3_3_adjacents(Board, Size, Row, Column, Adjacents),
+    shape_3(Tiles, Adjacents).
+
+% Shape 3 - 4 - 1
+% Gets a 3 - 4 - 1 shape and applies restrictions.
+% If it is not possible to use this shape, the predicate fails and restricts nothing
+shape_3_4_1(Board, Size, Row, Column) :-
+    get_3_4_1(Board, Size, Row, Column, Tiles),
+    Tiles \= [], !,
+    get_3_4_1_adjacents(Board, Size, Row, Column, Adjacents),
+    shape_3(Tiles, Adjacents).
+
+% Shape 3 - 4 - 2
+% Gets a 3 - 4 - 2 shape and applies restrictions.
+% If it is not possible to use this shape, the predicate fails and restricts nothing
+shape_3_4_2(Board, Size, Row, Column) :-
+    get_3_4_2(Board, Size, Row, Column, Tiles),
+    Tiles \= [], !,
+    get_3_4_2_adjacents(Board, Size, Row, Column, Adjacents),
+    shape_3(Tiles, Adjacents).
+
+% Shape 3 - 4 - 3
+% Gets a 3 - 4 - 3 shape and applies restrictions.
+% If it is not possible to use this shape, the predicate fails and restricts nothing
+shape_3_4_3(Board, Size, Row, Column) :-
+    get_3_4_3(Board, Size, Row, Column, Tiles),
+    Tiles \= [], !,
+    get_3_4_3_adjacents(Board, Size, Row, Column, Adjacents),
+    shape_3(Tiles, Adjacents).
+
+% Shape 3 - 5 - 1
+% Gets a 3 - 5 - 1 shape and applies restrictions.
+% If it is not possible to use this shape, the predicate fails and restricts nothing
+shape_3_5_1(Board, Size, Row, Column) :-
+    get_3_5_1(Board, Size, Row, Column, Tiles),
+    Tiles \= [], !,
+    get_3_5_1_adjacents(Board, Size, Row, Column, Adjacents),
+    shape_3(Tiles, Adjacents).
+
+% Shape 3 - 5 - 2
+% Gets a 3 - 5 - 2 shape and applies restrictions.
+% If it is not possible to use this shape, the predicate fails and restricts nothing
+shape_3_5_2(Board, Size, Row, Column) :-
+    get_3_5_2(Board, Size, Row, Column, Tiles),
+    Tiles \= [], !,
+    get_3_5_2_adjacents(Board, Size, Row, Column, Adjacents),
+    shape_3(Tiles, Adjacents).
+
+% Shape 3 - 5 - 3
+% Gets a 3 - 5 - 3 shape and applies restrictions.
+% If it is not possible to use this shape, the predicate fails and restricts nothing
+shape_3_5_3(Board, Size, Row, Column) :-
+    get_3_5_3(Board, Size, Row, Column, Tiles),
+    Tiles \= [], !,
+    get_3_5_3_adjacents(Board, Size, Row, Column, Adjacents),
+    shape_3(Tiles, Adjacents).
+
+% Shape 3 - 6 - 1
+% Gets a 3 - 6 - 1 shape and applies restrictions.
+% If it is not possible to use this shape, the predicate fails and restricts nothing
+shape_3_6_1(Board, Size, Row, Column) :-
+    get_3_6_1(Board, Size, Row, Column, Tiles),
+    Tiles \= [], !,
+    get_3_6_1_adjacents(Board, Size, Row, Column, Adjacents),
+    shape_3(Tiles, Adjacents).
+
+% Shape 3 - 6 - 2
+% Gets a 3 - 6 - 2 shape and applies restrictions.
+% If it is not possible to use this shape, the predicate fails and restricts nothing
+shape_3_6_2(Board, Size, Row, Column) :-
+    get_3_6_2(Board, Size, Row, Column, Tiles),
+    Tiles \= [], !,
+    get_3_6_2_adjacents(Board, Size, Row, Column, Adjacents),
+    shape_3(Tiles, Adjacents).
+
+% Shape 3 - 6 - 3
+% Gets a 3 - 6 - 3 shape and applies restrictions.
+% If it is not possible to use this shape, the predicate fails and restricts nothing
+shape_3_6_3(Board, Size, Row, Column) :-
+    get_3_6_3(Board, Size, Row, Column, Tiles),
+    Tiles \= [], !,
+    get_3_6_3_adjacents(Board, Size, Row, Column, Adjacents),
+    shape_3(Tiles, Adjacents).
+
+% Apply Constraint Geost
+% Applies every piece constraint as a disjunction.
+% Any piece that is valid (either in shape or by constraint placement)
+% is a possible restriciton for the variables.
+% When a piece is not valid, the shape predicates return false,
+% which is neutral in a disjunction.
+apply_constraint_geost(Board, Size, Row-Column) :-
+    (shape_1(Board, Size, Row, Column) ; true), !,
+    (shape_2_1(Board, Size, Row, Column) ; true), !,
+    (shape_2_2(Board, Size, Row, Column) ; true), !,
+    (shape_2_3(Board, Size, Row, Column) ; true), !,
+    (shape_2_4(Board, Size, Row, Column) ; true), !,
+    (shape_3_1_1(Board, Size, Row, Column) ; true), !,
+    (shape_3_1_2(Board, Size, Row, Column) ; true), !,
+    (shape_3_1_3(Board, Size, Row, Column) ; true), !,
+    (shape_3_2_1(Board, Size, Row, Column) ; true), !,
+    (shape_3_2_2(Board, Size, Row, Column) ; true), !,
+    (shape_3_2_3(Board, Size, Row, Column) ; true), !,
+    (shape_3_3_1(Board, Size, Row, Column) ; true), !,
+    (shape_3_3_2(Board, Size, Row, Column) ; true), !,
+    (shape_3_3_3(Board, Size, Row, Column) ; true), !,
+    (shape_3_4_1(Board, Size, Row, Column) ; true), !,
+    (shape_3_4_2(Board, Size, Row, Column) ; true), !,
+    (shape_3_4_3(Board, Size, Row, Column) ; true), !,
+    (shape_3_5_1(Board, Size, Row, Column) ; true), !,
+    (shape_3_5_2(Board, Size, Row, Column) ; true), !,
+    (shape_3_5_3(Board, Size, Row, Column) ; true), !,
+    (shape_3_6_1(Board, Size, Row, Column) ; true), !,
+    (shape_3_6_2(Board, Size, Row, Column) ; true), !,
+    (shape_3_6_3(Board, Size, Row, Column) ; true).
+
+% Solves the 123 puzzle using the geost-like approach
+solve_puzzle_geost(Board) :-
+    length(Board, Size),
+    Max is Size - 1,
+    append(Board, FlatBoard),
+
+    domain(FlatBoard, 1, 3),
+    findall(R-C, (between(0, Max, R), between(0, Max, C)), Positions),
+    maplist(apply_constraint_geost(Board, Size), Positions),
+
+    write('.'),
+    statistics(walltime, [Start,_]),
+    labeling([], FlatBoard),
+    statistics(walltime, [End,_]),
+	Time is End - Start,
+    
+    display_board(Board, Size),
+    format(' > Duration: ~3d s~n~n', [Time]),
+    format(' > Statistics: ~n~n', []), fd_statistics, nl.
