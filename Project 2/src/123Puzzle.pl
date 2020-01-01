@@ -1,123 +1,36 @@
 :- include('display.pl').
 :- include('puzzleDatabase.pl').
+:- include('board_utils.pl').
 :- use_module(library(clpfd)).
 :- use_module(library(lists)).
 :- use_module(library(random)).
 :- use_module(library(between)).
 :- use_module(library(system)).
 
+% Predicate used in the labeling options, in order for the variable selection
+% to be random.
 selRandom(ListOfVars, Var, Rest) :-
     random_select(Var, ListOfVars, Rest). 
 
+% Predicate used in the labeling options, in order for the value selection 
+% to be random.
 selRandom(Var, _Rest, BB0, BB1) :-
     fd_set(Var, Set), fdset_to_list(Set, List),
     random_member(Value, List),
     (first_bound(BB0, BB1), Var #= Value ; later_bound(BB0, BB1), Var #\= Value ).
 
+% Applies a restriction to the given List of variables so that there are exactly
+% N variables with the value X in the List.
 exactly(_, [], 0).
 exactly(X, [Y|L], N) :-
     X #= Y #<=> B,
     N #= M+B,
     exactly(X, L, M).
 
-row_list(Size, Row) :-
-    length(Row, Size).
-generate_empty_board(Size, Board) :-
-    length(Board, Size),
-    maplist(row_list(Size), Board).
-
-get_horizontal_adjacent_numbers(Board, Size, R, 0, [Adjacent]) :-
-    R >= 0, R < Size, 
-    nth0(R, Board, Row),
-    nth0(1, Row, Adjacent).
-get_horizontal_adjacent_numbers(Board, Size, R, C, [Adjacent]) :-
-    Size =:= C + 1,
-    R >= 0, R < Size,
-    nth0(R, Board, Row),
-    LeftPos is C - 1,
-    nth0(LeftPos, Row, Adjacent).
-get_horizontal_adjacent_numbers(Board, Size, R, C, [AdjacentLeft, AdjacentRight]) :-
-    R >= 0, C >= 0, 
-    R < Size, C < Size, 
-    nth0(R, Board, Row),
-    LeftPos is C - 1,
-    RightPos is C + 1,
-    nth0(LeftPos, Row, AdjacentLeft),
-    nth0(RightPos, Row, AdjacentRight).
-get_horizontal_adjacent_numbers(_, 1, 0, 0, []).
-
-get_vertical_adjacent_numbers(Board, Size, 0, C, [Adjacent]) :-
-    C >= 0, C < Size, 
-    nth0(1, Board, Row),
-    nth0(C, Row, Adjacent).
-get_vertical_adjacent_numbers(Board, Size, R, C, [Adjacent]) :-
-    Size =:= R + 1,
-    C >= 0, C < Size,
-    UpPos is R - 1,
-    nth0(UpPos, Board, Row),
-    nth0(C, Row, Adjacent).
-get_vertical_adjacent_numbers(Board, Size, R, C, [AdjacentUp, AdjacentDown]) :-
-    R >= 0, C >= 0, 
-    R < Size, C < Size, 
-    UpPos is R - 1,
-    DownPos is R + 1,
-    nth0(UpPos, Board, UpperRow),
-    nth0(DownPos, Board, LowerRow),
-    nth0(C, UpperRow, AdjacentUp),
-    nth0(C, LowerRow, AdjacentDown).
-get_vertical_adjacent_numbers(_, 1, 0, 0, []).
-
-get_adjacent_numbers(Board, Size, Row, Column, AdjacentNumbers) :-
-    get_horizontal_adjacent_numbers(Board, Size, Row, Column, HorizontalAdjacent),
-    get_vertical_adjacent_numbers(Board, Size, Row, Column, VerticalAdjacent),
-    append(HorizontalAdjacent, VerticalAdjacent, AdjacentNumbers).
-
-
-get_horizontal_adjacent_coords(Size, R, 0, [Adjacent]) :-
-    R >= 0, R < Size, 
-    Adjacent = R-1.
-get_horizontal_adjacent_coords(Size, R, C, [Adjacent]) :-
-    Size =:= C + 1,
-    R >= 0, R < Size,
-    LeftPos is C - 1,
-    Adjacent = R-LeftPos.
-get_horizontal_adjacent_coords(Size, R, C, [AdjacentLeft, AdjacentRight]) :-
-    R >= 0, C >= 1, 
-    R < Size, C < Size - 1, 
-    LeftPos is C - 1,
-    RightPos is C + 1,
-    AdjacentLeft = R-LeftPos,
-    AdjacentRight = R-RightPos.
-get_horizontal_adjacent_coords(1, 0, 0, []).
-
-get_vertical_adjacent_coords(Size, 0, C, [Adjacent]) :-
-    C >= 0, C < Size, 
-    Adjacent = 1-C.
-get_vertical_adjacent_coords(Size, R, C, [Adjacent]) :-
-    Size =:= R + 1,
-    C >= 0, C < Size,
-    UpPos is R - 1,
-    Adjacent = UpPos-C.
-get_vertical_adjacent_coords(Size, R, C, [AdjacentUp, AdjacentDown]) :-
-    R >= 1, C >= 0, 
-    R < Size - 1, C < Size, 
-    UpPos is R - 1,
-    DownPos is R + 1,
-    AdjacentUp = UpPos-C,
-    AdjacentDown = DownPos-C.
-get_vertical_adjacent_coords(1, 0, 0, []).
-
-get_adjacent_coords(Size, Row, Column, Adjacent) :-
-    get_horizontal_adjacent_coords(Size, Row, Column, HorizontalAdjacent),
-    get_vertical_adjacent_coords(Size, Row, Column, VerticalAdjacent),
-    append(HorizontalAdjacent, VerticalAdjacent, Adjacent).
-
-get_number(Board, Size, R, C, Number) :-
-    R >= 0, C >= 0, 
-    R < Size, C < Size,
-    nth0(R, Board, Row),
-    nth0(C, Row, Number).
-    
+% Applies a restriction to the cells with the coordinates in the given list so that,
+% if the value in that cell is equal to Number, then the number of cells adjacent to it
+% with that same Number can't be equal to N, otherwise it doesn't apply a meaningful
+% restriction.
 apply_different(_, _, [], _, _, _).
 apply_different(Board, Size, [R-C | T], Number, N, B) :-
     get_number(Board, Size, R, C, PosNumber),
@@ -127,6 +40,10 @@ apply_different(Board, Size, [R-C | T], Number, N, B) :-
     exactly(Number, AdjacentNumbers, M),
     apply_different(Board, Size, T, Number, N, B).
 
+% It applies a restriction to the cell's variable of the given coordinates, so that,
+% the Number on that variable must be the number of cells with that same Number, on
+% the 'island' of identical cells where cell is inserted, that are adjacent to at least
+% one cell on that 'island'.
 apply_constraint(Board, Size, R-C) :-
     get_number(Board, Size, R, C, Number),
     Number #< 3 #<=> B,
@@ -136,15 +53,9 @@ apply_constraint(Board, Size, R-C) :-
     get_adjacent_coords(Size, R, C, Adjacent),
     apply_different(Board, Size, Adjacent, Number, N, B).
 
-random_solution(Board) :-
-    length(Board, Size),
-    Max is Size - 1,
-    append(Board, FlatBoard),
-    domain(FlatBoard, 1, 3),
-    findall(R-C, (between(0, Max, R), between(0, Max, C)), Positions),
-    maplist(apply_constraint(Board, Size), Positions),
-    labeling([value(selRandom)], FlatBoard).
-
+% If the given Board is solvable, it finds a solution to it using restriction programming
+% and displays the solved board, as well as the time spent on labeling plus other labeling
+% statistics. If there are no solutions left then it will return 'no'.
 solve_puzzle(Board) :-
 
     length(Board, Size),
@@ -154,85 +65,77 @@ solve_puzzle(Board) :-
     domain(FlatBoard, 1, 3),
     findall(R-C, (between(0, Max, R), between(0, Max, C)), Positions),
     maplist(apply_constraint(Board, Size), Positions),
-    write('.'),
+    %write('.'),
     statistics(walltime, [Start,_]),
     labeling([], FlatBoard),
     statistics(walltime, [End,_]),
 	Time is End - Start,
     
-    display_board(Board, Size),
+    display_board(Board, Size, 'Solution'),
     format(' > Duration: ~3d s~n~n', [Time]),
     format(' > Statistics: ~n~n', []), fd_statistics, nl.
 
+% If the given Board is solvable, it finds a solution to it using restriction programming.
+% If there are no solutions left then it will return 'no'. Will not display neither the 
+% solved board nor any statistics related to the labeling process.
+solve_puzzle_no_stats(Board) :-
+
+    length(Board, Size),
+    Max is Size - 1,
+
+    append(Board, FlatBoard),
+    domain(FlatBoard, 1, 3),
+    findall(R-C, (between(0, Max, R), between(0, Max, C)), Positions),
+    maplist(apply_constraint(Board, Size), Positions),
+    labeling([], FlatBoard).
+
+% Much like the solve_puzzle predicate, it finds a solution (if one exists) to the given
+% board, however the labeling process is done such that the given solution, provided there
+% are more than one, is random. Unlike the solve_puzzle it does not display the board or
+% labeling statistics, since it is suppose to be used for generating puzzles, as an 
+% auxilary predicate.
+solve_puzzle_random(Board) :-
+    length(Board, Size),
+    Max is Size - 1,
+    append(Board, FlatBoard),
+    domain(FlatBoard, 1, 3),
+    findall(R-C, (between(0, Max, R), between(0, Max, C)), Positions),
+    maplist(apply_constraint(Board, Size), Positions),
+    labeling([value(selRandom)], FlatBoard).
+
+% Works in a similar way to the exactly predicate. It applies a restriction to the list of 
+% variables in the first argument, so that the number of variables that have the same number
+% in the same position as the variable on the list in the second argument, is exactly Clues.
 board_picking([], [], 0).
 board_picking([Var | RB], [Number | RFB], Clues) :-
     Var #= Number #<=> N,
     Clues #= N + OtherClues,
     board_picking(RB, RFB, OtherClues).
 
+% Generates a random unsolved puzzle and displays it in the terminal along with some statistics.
 generate_puzzle(Dimensions, Board) :-
-    generate_empty_board(Dimensions, TempBoard),
+    generate_empty_board(Dimensions, Board),
     generate_empty_board(Dimensions, FullBoard),
-    random_solution(FullBoard),
+    solve_puzzle_random(FullBoard),
     NumberCells is Dimensions * Dimensions,
     Lower is floor(NumberCells / 7.0), Upper is ceiling(NumberCells / 6.0),
     random(Lower, Upper, Clues), Blanks is NumberCells - Clues, !,
-    append(TempBoard, FlatBoard), append(FullBoard, FlatFullBoard),
-    domain(FlatBoard, 0, 3),
-    board_picking(FlatBoard, FlatFullBoard, Clues),
-    global_cardinality(FlatBoard, [0-Blanks, 1-_, 2-_, 3-_]),
-    labeling([variable(selRandom), enum], FlatBoard),
-    clear_board_zeros(TempBoard, Board).
-    % statistics(walltime, [Start,_]),
-    % write('.'),
-    %labeling([variable(selRandom), enum], FlatBoard),
-    % statistics(walltime, [End,_]),
-	% Time is End - Start,
+    append(Board, FlatEmptyBoard), append(FullBoard, FlatFullBoard),
+    domain(FlatEmptyBoard, 0, 3),
+    board_picking(FlatEmptyBoard, FlatFullBoard, Clues),
+    global_cardinality(FlatEmptyBoard, [0-Blanks, 1-_, 2-_, 3-_]),
+    statistics(walltime, [Start,_]),
+    %write('.'),
+    labeling([variable(selRandom), enum], FlatEmptyBoard),
+    statistics(walltime, [End,_]),
+	Time is End - Start,
 
-    % %display_board(FullBoard, Dimensions),
-    % display_board(Board, Dimensions),
-    % format(' > Duration: ~3d s~n~n', [Time]),
-    % format(' > Statistics: ~n~n', []), fd_statistics, nl.
+    display_board(Board, Dimensions, 'Puzzle'),
+    format(' > Duration: ~3d s~n~n', [Time]),
+    format(' > Statistics: ~n~n', []), fd_statistics, nl.
 
-clear_board_zeros(Board, CleanBoard) :-
-    length(Board, Dimensions),
-    generate_empty_board(Dimensions, CleanBoard),
-    clear_list_zeros(Board, CleanBoard).
-
-clear_list_zeros([], []).
-
-clear_list_zeros([Row1 | Rest1], [Row2 | Rest2]) :-
-    clear_row_zeros(Row1, Row2), !,
-    clear_list_zeros(Rest1, Rest2).
-
-clear_row_zeros([], []).
-
-clear_row_zeros([H1 | T1], [H1 | T2]) :-
-    H1 =\= 0, !,
-    clear_row_zeros(T1, T2).
-
-clear_row_zeros([H1 | T1], [_ | T2]) :-
-    H1 =:= 0,
-    clear_row_zeros(T1, T2).
-
-% The following version of the count_solutions is intended to be used when solve_puzzle displays the solution.
-count_solutions(Board, NumSolutions) :-
-    length(Board, Size),
-    Max is Size - 1,
-    append(Board, FlatBoard),
-
-    domain(FlatBoard, 1, 3),
-    findall(R-C, (between(0, Max, R), between(0, Max, C)), Positions),
-    maplist(apply_constraint(Board, Size), Positions),
-
-    findall(FlatBoard, labeling([], FlatBoard), ListSolutions),
-    length(ListSolutions, NumSolutions).
-
-% The following version of the predicate works fine if solve_puzzle does not display the solution.
-% count_solutions(Board, NumSolutions) :-
-%     findall(_, solve_puzzle(Board), List),
-%     length(List, NumSolutions).
-
-generate_unique_puzzle(Dimensions, Board) :-
-    generate_puzzle(Dimensions, Board),
-    count_solutions(Board, 1).
+% Counts the number of possible solutions for the given Board.
+count_solutions(Board) :-
+    findall(_, solve_puzzle_no_stats(Board), List),
+    length(List, NumSolutions),
+    format('~n > Number of different solutions: ~d ~n~n', [NumSolutions]).
