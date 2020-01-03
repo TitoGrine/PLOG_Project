@@ -71,7 +71,7 @@ solve_puzzle(Board) :-
     statistics(walltime, [End,_]),
 	Time is End - Start,
     
-    display_board(Board, Size, 'Solution'),
+    display_board(Board,'Solution'),
     format(' > Duration: ~3d s~n~n', [Time]),
     format(' > Statistics: ~n~n', []), fd_statistics, nl.
 
@@ -130,7 +130,7 @@ generate_puzzle(Dimensions, Board) :-
     statistics(walltime, [End,_]),
 	Time is End - Start,
 
-    display_board(Board, Dimensions, 'Puzzle'),
+    display_board(Board, 'Puzzle'),
     format(' > Duration: ~3d s~n~n', [Time]),
     format(' > Statistics: ~n~n', []), fd_statistics, nl.
 

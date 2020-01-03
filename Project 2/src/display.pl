@@ -2,7 +2,7 @@
 
 % Writes in the terminal the number in Element, or an 'X' if Element is a variable or a 0.
 write_element(Element) :-
-    (((var(Element) ; Element is 0), write('X')) ; write(Element)).
+    (((var(Element) ; Element is 0), write(' ')) ; write(Element)).
 
 % Displays a line used to separate rows.
 draw_line_across(0).
@@ -24,7 +24,8 @@ draw_board(L, Row) :-
     draw_board_row(Row).
 
 % Displays the given board in a friendly format.
-display_board(Board, L, Message) :-
+display_board(Board, Message) :-
+    length(Board, L),
     nl, write(Message), write(':'), nl, nl,
     maplist(draw_board(L), Board),
     write(' '), draw_line_across(L), nl, nl, !.
