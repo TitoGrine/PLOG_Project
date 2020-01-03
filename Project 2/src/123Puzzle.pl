@@ -24,34 +24,34 @@ selRandom(Var, _Rest, BB0, BB1) :-
 exactly(_, [], 0).
 exactly(X, [Y|L], N) :-
     X #= Y #<=> B,
-    N #= M+B,
+    N #= M + B,
     exactly(X, L, M).
 
 % Applies a restriction to the cells with the coordinates in the given list so that,
 % if the value in that cell is equal to Number, then the number of cells adjacent to it
 % with that same Number can't be equal to N, otherwise it doesn't apply a meaningful
 % restriction.
-apply_different(_, _, [], _, _, _).
-apply_different(Board, Size, [R-C | T], Number, N, B) :-
+apply_adjacent_contraint(_, _, [], _, _, _).
+apply_adjacent_contraint(Board, Size, [R-C | T], Number, N, B) :-
     get_number(Board, Size, R, C, PosNumber),
     PosNumber #\= Number #<=> Diff,
-    M #\= N + B - (100 * Diff),
+    M #\= N + B - (10 * Diff),
     get_adjacent_numbers(Board, Size, R, C, AdjacentNumbers),
     exactly(Number, AdjacentNumbers, M),
-    apply_different(Board, Size, T, Number, N, B).
+    apply_adjacent_contraint(Board, Size, T, Number, N, B).
 
 % It applies a restriction to the cell's variable of the given coordinates, so that,
 % the Number on that variable must be the number of cells with that same Number, on
 % the 'island' of identical cells where cell is inserted, that are adjacent to at least
 % one cell on that 'island'.
-apply_constraint(Board, Size, R-C) :-
+apply_cell_constraint(Board, Size, R-C) :-
     get_number(Board, Size, R, C, Number),
     Number #< 3 #<=> B,
     get_adjacent_numbers(Board, Size, R, C, AdjacentNumbers),
-    ((N #= Number - 1) #\/ (N #= Number - 2 + B)),
+    ((Number #= N + 1) #\/ (Number #= N + 2 - B)),
     exactly(Number, AdjacentNumbers, N),
     get_adjacent_coords(Size, R, C, Adjacent),
-    apply_different(Board, Size, Adjacent, Number, N, B).
+    apply_adjacent_contraint(Board, Size, Adjacent, Number, N, B).
 
 % If the given Board is solvable, it finds a solution to it using restriction programming
 % and displays the solved board, as well as the time spent on labeling plus other labeling
@@ -64,7 +64,7 @@ solve_puzzle(Board) :-
     append(Board, FlatBoard),
     domain(FlatBoard, 1, 3),
     findall(R-C, (between(0, Max, R), between(0, Max, C)), Positions),
-    maplist(apply_constraint(Board, Size), Positions),
+    maplist(apply_cell_constraint(Board, Size), Positions),
     %write('.'),
     statistics(walltime, [Start,_]),
     labeling([], FlatBoard),
@@ -86,7 +86,7 @@ solve_puzzle_no_stats(Board) :-
     append(Board, FlatBoard),
     domain(FlatBoard, 1, 3),
     findall(R-C, (between(0, Max, R), between(0, Max, C)), Positions),
-    maplist(apply_constraint(Board, Size), Positions),
+    maplist(apply_cell_constraint(Board, Size), Positions),
     labeling([], FlatBoard).
 
 % Much like the solve_puzzle predicate, it finds a solution (if one exists) to the given
@@ -100,7 +100,7 @@ solve_puzzle_random(Board) :-
     append(Board, FlatBoard),
     domain(FlatBoard, 1, 3),
     findall(R-C, (between(0, Max, R), between(0, Max, C)), Positions),
-    maplist(apply_constraint(Board, Size), Positions),
+    maplist(apply_cell_constraint(Board, Size), Positions),
     labeling([value(selRandom)], FlatBoard).
 
 % Works in a similar way to the exactly predicate. It applies a restriction to the list of 
