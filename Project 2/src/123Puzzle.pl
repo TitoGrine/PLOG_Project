@@ -66,14 +66,16 @@ solve_puzzle(Board) :-
     findall(R-C, (between(0, Max, R), between(0, Max, C)), Positions),
     maplist(apply_cell_constraint(Board, Size), Positions),
     %write('.'),
+    global_cardinality(FlatBoard, [1-One, 2-Two, 3-Three]),
     statistics(walltime, [Start,_]),
     labeling([], FlatBoard),
     statistics(walltime, [End,_]),
 	Time is End - Start,
     
     display_board(Board,'Solution'),
-    format(' > Duration: ~3d s~n~n', [Time]),
-    format(' > Statistics: ~n~n', []), fd_statistics, nl.
+    format(' > 1: ~d ; 2: ~d ; 3: ~d ~n~n', [One,Two, Three]), nl.
+    %format(' > Duration: ~3d s~n~n', [Time]),
+    %format(' > Statistics: ~n~n', []), fd_statistics, nl.
 
 % If the given Board is solvable, it finds a solution to it using restriction programming.
 % If there are no solutions left then it will return 'no'. Will not display neither the 
