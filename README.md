@@ -3,7 +3,7 @@
 Project of PLOG (Logic Programming - 3rd year of Integrated Master Degree in Computer Engineering).
 In the course of the semester, two assignments were requested. The [first](https://github.com/TitoGrine/PLOG_Project/tree/master/Project%201) was to build a game using the logic
 programming language [Prolog](https://en.wikipedia.org/wiki/Prolog). The [second](https://github.com/TitoGrine/PLOG_Project/tree/master/Project%202) was to develop a program capable of solving and generating puzzles
-by adopting [Contraint Logic Programming](https://en.wikipedia.org/wiki/Constraint_logic_programming), also using
+by adopting [Constraint Logic Programming](https://en.wikipedia.org/wiki/Constraint_logic_programming), also using
 the Prolog language.
 
 ### Course Information
