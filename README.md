@@ -17,8 +17,8 @@ the Prolog language.
 
 ### Evaluation
 
->**First Assignment:** ? (65%)
+>**First Assignment:** 19.5 (65%)
 
->**Second Assignment:** ? (35%)
+>**Second Assignment:** 19.9 (35%)
 
-**Project Grade:** ?
+**Project Grade:** 19.64
